@@ -2,8 +2,10 @@ package com.prico.controller;
 
 import com.prico.dto.ApiSuccessResponse;
 import com.prico.dto.ProductRequest;
+import com.prico.dto.ProductResponse;
 import com.prico.entity.Product;
 import com.prico.service.ProductService;
+import com.prico.util.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/products")
@@ -20,14 +23,14 @@ public class ProductController {
     private ProductService service;
 
     @GetMapping()
-    public ResponseEntity<List<Product>> getAll() {
-        List<Product> products = service.getAll();
+    public ResponseEntity<List<ProductResponse>> getAll() {
+        List<ProductResponse> products = service.getAll();
         return ResponseEntity.ok(products);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getById(@PathVariable Long id) {
-        Product product = service.getById(id);
+    public ResponseEntity<ProductResponse> getById(@PathVariable Long id) {
+        ProductResponse product = service.getById(id);
         return ResponseEntity.ok(product);
     }
 

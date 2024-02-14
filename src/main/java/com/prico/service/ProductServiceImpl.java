@@ -1,14 +1,17 @@
 package com.prico.service;
 
 import com.prico.dto.ProductRequest;
+import com.prico.dto.ProductResponse;
 import com.prico.exception.ProductNotFoundException;
 import com.prico.entity.Product;
 import com.prico.repository.ProductRepository;
+import com.prico.util.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -17,14 +20,23 @@ public class ProductServiceImpl implements ProductService {
     private ProductRepository repository;
 
     @Override
-    public List<Product> getAll() {
-        return repository.findAll();
+    public List<ProductResponse> getAll() {
+        return repository
+            .findAll()
+            .stream()
+            .map(x -> ObjectMapper.toDto(x))
+            .collect(Collectors.toList());
     }
 
     @Override
-    public Product getById(Long id) {
+    public ProductResponse getById(Long id) {
         Optional<Product> optionalProduct = repository.findById(id);
-        return optionalProduct.orElseThrow(() -> new ProductNotFoundException("Product not found with id: " + id));
+
+        if (optionalProduct.isPresent()) {
+            return ObjectMapper.toDto(optionalProduct.get());
+        }
+
+        throw new ProductNotFoundException("Product not found with id: " + id);
     }
 
     @Override

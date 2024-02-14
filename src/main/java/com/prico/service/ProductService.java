@@ -1,9 +1,19 @@
 package com.prico.service;
 
-import com.prico.model.Product;
+import com.prico.dto.ProductRequest;
+import com.prico.entity.Product;
+
+import java.util.List;
 
 public interface ProductService {
-    Product getProductById(Long productId);
-//    List<ProductComparisonResult> comparePrices(List<Long> productIds);
-//    // Other methods for CRUD operations, etc.
+
+    List<Product> getAll();
+
+    Product getById(Long id);
+
+    Product create(ProductRequest product);
+
+    Product update(Long id, ProductRequest product);
+
+    void delete(Long id);
 }

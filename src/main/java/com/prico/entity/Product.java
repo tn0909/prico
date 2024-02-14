@@ -1,4 +1,4 @@
-package com.prico.model;
+package com.prico.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,7 +11,9 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
+
     private String description;
 
     public Long getId() {
@@ -37,5 +39,5 @@ public class Product {
     public void setDescription(String description) {
         this.description = description;
     }
-    // other fields, constructors, getters, and setters
+
 }

@@ -1,12 +1,12 @@
 package com.prico.service;
 
+import com.prico.dto.ProductRequest;
 import com.prico.exception.ProductNotFoundException;
-import com.prico.model.Product;
+import com.prico.entity.Product;
 import com.prico.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,19 +14,48 @@ import java.util.Optional;
 public class ProductServiceImpl implements ProductService {
 
     @Autowired
-    private ProductRepository productRepository;
+    private ProductRepository repository;
 
     @Override
-    public Product getProductById(Long productId) {
-        Optional<Product> optionalProduct = productRepository.findById(productId);
-        return optionalProduct.orElseThrow(() -> new ProductNotFoundException("Product not found with id: " + productId));
+    public List<Product> getAll() {
+        return repository.findAll();
     }
 
-//    @Override
-//    public List<ProductComparisonResult> comparePrices(List<Long> productIds) {
-//        // Implement price comparison logic here
-//        return Collections.emptyList();
-//    }
-//
-//    // Other method implementations for CRUD operations, etc.
+    @Override
+    public Product getById(Long id) {
+        Optional<Product> optionalProduct = repository.findById(id);
+        return optionalProduct.orElseThrow(() -> new ProductNotFoundException("Product not found with id: " + id));
+    }
+
+    @Override
+    public Product create(ProductRequest productRequest) {
+        Product product = new Product();
+        product.setName(productRequest.getName());
+        product.setDescription(productRequest.getDescription());
+
+        return repository.save(product);
+    }
+
+    @Override
+    public Product update(Long id, ProductRequest productRequest) {
+        Product existingProduct = repository.findById(id).orElse(null);
+
+        if (existingProduct != null) {
+            existingProduct.setName(productRequest.getName());
+            existingProduct.setDescription(productRequest.getDescription());
+
+            return repository.save(existingProduct);
+        }
+
+        throw new ProductNotFoundException("Product not found with id: " + id);
+    }
+
+    @Override
+    public void delete(Long id) {
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
+        }
+
+        throw new ProductNotFoundException("Product not found with id: " + id);
+    }
 }

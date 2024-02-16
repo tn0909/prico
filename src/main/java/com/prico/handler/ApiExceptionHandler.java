@@ -1,10 +1,12 @@
 package com.prico.handler;
 
-import com.prico.dto.ApiErrorResponse;
-import com.prico.dto.ApiSuccessResponse;
+import com.prico.dto.ApiError;
+import com.prico.dto.ApiResponse;
 import com.prico.exception.ProductNotFoundException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,13 +16,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.ArrayList;
 import java.util.List;
 
+@Order(Ordered.HIGHEST_PRECEDENCE)
+@Slf4j
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
     @ExceptionHandler(ProductNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiErrorResponse<?> handleProductNotFoundException(ProductNotFoundException ex) {
-        ApiErrorResponse<?> response = ApiErrorResponse
+    public ApiResponse<?> handleProductNotFoundException(ProductNotFoundException ex) {
+        ApiResponse<?> response = ApiResponse
             .<List<String>>builder()
             .status("error")
             .message(ex.getMessage())
@@ -31,19 +35,19 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiErrorResponse<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-        List<String> errors = new ArrayList<>();
+    public ApiResponse<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+        List<ApiError> errors = new ArrayList<>();
 
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
-            errors.add(fieldName + ": " + errorMessage);
+            errors.add(new ApiError(fieldName, errorMessage));
         });
 
-        ApiErrorResponse<List<String>> response = ApiErrorResponse
+        ApiResponse<List<String>> response = ApiResponse
             .<List<String>>builder()
             .status("error")
-            .data(errors)
+            .errors(errors)
             .message("Validation failed")
             .build();
 

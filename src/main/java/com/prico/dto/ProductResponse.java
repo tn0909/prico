@@ -10,12 +10,7 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductResponse {
-
     private Long id;
-
-    @NotBlank(message = "Name is mandatory")
     private String name;
-
-    @NotBlank(message = "Description is mandatory")
     private String description;
 }

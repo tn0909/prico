@@ -21,11 +21,14 @@ jobs:
         cache: maven
    
     - name: Build with Maven
-      run: mvn clean verify
+      run: mvn -B package --file pom.xml
 
-    - name: Test Report
+    - name: Run Tests
+      run: mvn test
+
+    - name: Upload Test Report
       uses: actions/upload-artifact@v3
       if: success() || failure()
       with:
-          name: SpringBoot Report               # Name of the folder
-          path: target/site/serenity/           # Path to test results
+          name: test-results                    # Name of the folder
+          path: target/surefire-reports         # Path to test results

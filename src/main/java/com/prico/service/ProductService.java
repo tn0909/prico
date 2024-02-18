@@ -1,20 +1,20 @@
 package com.prico.service;
 
-import com.prico.dto.ProductRequest;
-import com.prico.dto.ProductResponse;
+import com.prico.dto.ProductRequestDto;
+import com.prico.dto.ProductResponseDto;
 import com.prico.entity.Product;
 
 import java.util.List;
 
 public interface ProductService {
 
-    List<ProductResponse> getAll();
+    List<ProductResponseDto> getAll();
 
-    ProductResponse getById(Long id);
+    ProductResponseDto getById(Long id);
 
-    Product create(ProductRequest product);
+    Product create(ProductRequestDto product);
 
-    Product update(Long id, ProductRequest product);
+    Product update(Long id, ProductRequestDto product);
 
     void delete(Long id);
 }

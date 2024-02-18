@@ -1,7 +1,7 @@
 package com.prico.controller;
 
-import com.prico.dto.ProductRequest;
-import com.prico.dto.ProductResponse;
+import com.prico.dto.ProductRequestDto;
+import com.prico.dto.ProductResponseDto;
 import com.prico.entity.Product;
 import com.prico.exception.ProductNotFoundException;
 import com.prico.service.ProductService;
@@ -32,14 +32,14 @@ public class ProductControllerTest {
 
     @Test
     public void testGetAll() throws Exception {
-        ProductResponse product1 = ProductResponse
+        ProductResponseDto product1 = ProductResponseDto
                 .builder()
                 .id(1L)
                 .name("Test Product 1")
                 .description("This is the 1st test product")
                 .build();
 
-        ProductResponse product2 = ProductResponse
+        ProductResponseDto product2 = ProductResponseDto
                 .builder()
                 .id(2L)
                 .name("Test Product 2")
@@ -63,7 +63,7 @@ public class ProductControllerTest {
 
     @Test
     public void testGetById() throws Exception {
-        ProductResponse productDto = new ProductResponse();
+        ProductResponseDto productDto = new ProductResponseDto();
         productDto.setId(1L);
         productDto.setName("Test Product");
         productDto.setDescription("This is a test product");
@@ -95,7 +95,7 @@ public class ProductControllerTest {
 
     @Test
     public void testCreate() throws Exception {
-        ProductRequest productDto = new ProductRequest();
+        ProductRequestDto productDto = new ProductRequestDto();
         productDto.setName("New Product");
         productDto.setDescription("This is a test product");
 
@@ -106,7 +106,7 @@ public class ProductControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.message").value("Product has been created successfully"));
 
-        verify(productService).create(any(ProductRequest.class));
+        verify(productService).create(any(ProductRequestDto.class));
     }
 
     @Test
@@ -130,7 +130,7 @@ public class ProductControllerTest {
         long productId = 1L;
         Product updatedProduct = new Product(productId, "Updated Product", "Updated description");
         when(productService
-                .update(eq(productId), any(ProductRequest.class)))
+                .update(eq(productId), any(ProductRequestDto.class)))
                 .thenReturn(updatedProduct);
 
         mockMvc.perform(put("/products/{id}", productId)
@@ -140,7 +140,7 @@ public class ProductControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.message").value("Product has been updated successfully"));
 
-        verify(productService).update(eq(productId), any(ProductRequest.class));
+        verify(productService).update(eq(productId), any(ProductRequestDto.class));
     }
 
     @Test

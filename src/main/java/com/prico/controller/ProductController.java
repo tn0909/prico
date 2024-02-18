@@ -1,8 +1,8 @@
 package com.prico.controller;
 
 import com.prico.dto.ApiResponse;
-import com.prico.dto.ProductRequest;
-import com.prico.dto.ProductResponse;
+import com.prico.dto.ProductRequestDto;
+import com.prico.dto.ProductResponseDto;
 import com.prico.entity.Product;
 import com.prico.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
@@ -23,19 +23,19 @@ public class ProductController {
     private ProductService service;
 
     @GetMapping()
-    public ResponseEntity<List<ProductResponse>> getAll() {
-        List<ProductResponse> products = service.getAll();
+    public ResponseEntity<List<ProductResponseDto>> getAll() {
+        List<ProductResponseDto> products = service.getAll();
         return ResponseEntity.ok(products);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductResponse> getById(@PathVariable Long id) {
-        ProductResponse product = service.getById(id);
+    public ResponseEntity<ProductResponseDto> getById(@PathVariable Long id) {
+        ProductResponseDto product = service.getById(id);
         return ResponseEntity.ok(product);
     }
 
     @PostMapping()
-    public ResponseEntity<ApiResponse<?>> create(@Valid @RequestBody ProductRequest product) {
+    public ResponseEntity<ApiResponse<?>> create(@Valid @RequestBody ProductRequestDto product) {
         service.create(product);
 
         ApiResponse<Product> response = new ApiResponse<>();
@@ -46,7 +46,7 @@ public class ProductController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<?>> update(@PathVariable Long id,
-                                                 @Valid @RequestBody ProductRequest product) {
+                                                 @Valid @RequestBody ProductRequestDto product) {
         service.update(id, product);
 
         ApiResponse<Product> response = new ApiResponse<>();

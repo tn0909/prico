@@ -1,18 +1,16 @@
 package com.prico.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class ProductResponse {
-    private Long id;
+public class ProductRequestDto {
+
+    @NotBlank(message = "Product name should not be NULL or EMPTY")
     private String name;
+
     private String description;
 }

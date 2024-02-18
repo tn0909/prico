@@ -1,7 +1,7 @@
 package com.prico.util;
 
-import com.prico.dto.ProductRequest;
-import com.prico.dto.ProductResponse;
+import com.prico.dto.ProductRequestDto;
+import com.prico.dto.ProductResponseDto;
 import com.prico.entity.Product;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +15,7 @@ public class ObjectMapperTest {
         Product product = new Product(1L, "Product 1", "Product description");
 
         // When
-        ProductResponse productDto = ObjectMapper.toDto(product);
+        ProductResponseDto productDto = ObjectMapper.toDto(product);
 
         // Then
         assertEquals(product.getId(), productDto.getId());
@@ -26,7 +26,7 @@ public class ObjectMapperTest {
     @Test
     public void testToEntity_Product() {
         // Given
-        ProductRequest productDto = new ProductRequest("Product 1", "Product description");
+        ProductRequestDto productDto = new ProductRequestDto("Product 1", "Product description");
 
         // When
         Product product = ObjectMapper.toEntity(productDto);

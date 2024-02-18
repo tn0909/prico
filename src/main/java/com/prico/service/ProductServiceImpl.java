@@ -1,7 +1,7 @@
 package com.prico.service;
 
-import com.prico.dto.ProductRequest;
-import com.prico.dto.ProductResponse;
+import com.prico.dto.ProductRequestDto;
+import com.prico.dto.ProductResponseDto;
 import com.prico.exception.ProductNotFoundException;
 import com.prico.entity.Product;
 import com.prico.repository.ProductRepository;
@@ -22,7 +22,7 @@ public class ProductServiceImpl implements ProductService {
     private ProductRepository repository;
 
     @Override
-    public List<ProductResponse> getAll() {
+    public List<ProductResponseDto> getAll() {
         return repository
             .findAll()
             .stream()
@@ -31,7 +31,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductResponse getById(Long id) {
+    public ProductResponseDto getById(Long id) {
         Optional<Product> optionalProduct = repository.findById(id);
 
         if (optionalProduct.isPresent()) {
@@ -42,7 +42,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product create(ProductRequest productRequest) {
+    public Product create(ProductRequestDto productRequest) {
         Product product = new Product();
         product.setName(productRequest.getName());
         product.setDescription(productRequest.getDescription());
@@ -51,7 +51,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product update(Long id, ProductRequest productRequest) {
+    public Product update(Long id, ProductRequestDto productRequest) {
         Product existingProduct = repository.findById(id).orElse(null);
 
         if (existingProduct != null) {

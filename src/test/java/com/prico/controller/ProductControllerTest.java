@@ -128,7 +128,12 @@ public class ProductControllerTest {
     @Test
     public void testUpdate() throws Exception {
         long productId = 1L;
-        Product updatedProduct = new Product(productId, "Updated Product", "Updated description");
+        Product updatedProduct = Product
+                .builder()
+                .id(productId)
+                .name("Updated Product")
+                .description("Updated description")
+                .build();
         when(productService
                 .update(eq(productId), any(ProductRequest.class)))
                 .thenReturn(updatedProduct);

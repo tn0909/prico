@@ -36,7 +36,6 @@ public class ProductController {
 
     @PostMapping()
     public ResponseEntity<ApiResponse<?>> create(@Valid @RequestBody ProductRequest product) {
-        log.debug("TEST: controller.create");
         service.create(product);
 
         ApiResponse<Product> response = new ApiResponse<>();

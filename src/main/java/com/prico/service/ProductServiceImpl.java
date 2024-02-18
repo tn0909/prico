@@ -6,6 +6,7 @@ import com.prico.exception.ProductNotFoundException;
 import com.prico.entity.Product;
 import com.prico.repository.ProductRepository;
 import com.prico.util.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class ProductServiceImpl implements ProductService {
 
     @Autowired
@@ -66,6 +68,7 @@ public class ProductServiceImpl implements ProductService {
     public void delete(Long id) {
         if (repository.existsById(id)) {
             repository.deleteById(id);
+            return;
         }
 
         throw new ProductNotFoundException("Product not found with id: " + id);

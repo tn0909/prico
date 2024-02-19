@@ -8,3 +8,12 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+
+  # Fix error when adding swagger plugin
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
+
+springfox:
+  documentation:
+    swagger-ui.enabled: true

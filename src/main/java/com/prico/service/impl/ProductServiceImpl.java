@@ -1,10 +1,11 @@
-package com.prico.service;
+package com.prico.service.impl;
 
-import com.prico.dto.ProductRequest;
-import com.prico.dto.ProductResponse;
-import com.prico.exception.ProductNotFoundException;
+import com.prico.dto.ProductRequestDto;
+import com.prico.dto.ProductResponseDto;
+import com.prico.exception.EntityNotFoundException;
 import com.prico.entity.Product;
 import com.prico.repository.ProductRepository;
+import com.prico.service.ProductService;
 import com.prico.util.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class ProductServiceImpl implements ProductService {
     private ProductRepository repository;
 
     @Override
-    public List<ProductResponse> getAll() {
+    public List<ProductResponseDto> getAll() {
         return repository
             .findAll()
             .stream()
@@ -31,18 +32,18 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductResponse getById(Long id) {
+    public ProductResponseDto getById(Long id) {
         Optional<Product> optionalProduct = repository.findById(id);
 
         if (optionalProduct.isPresent()) {
             return ObjectMapper.toDto(optionalProduct.get());
         }
 
-        throw new ProductNotFoundException("Product not found with id: " + id);
+        throw new EntityNotFoundException("Product not found with id: " + id);
     }
 
     @Override
-    public Product create(ProductRequest productRequest) {
+    public Product create(ProductRequestDto productRequest) {
         Product product = new Product();
         product.setName(productRequest.getName());
         product.setDescription(productRequest.getDescription());
@@ -51,7 +52,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product update(Long id, ProductRequest productRequest) {
+    public Product update(Long id, ProductRequestDto productRequest) {
         Product existingProduct = repository.findById(id).orElse(null);
 
         if (existingProduct != null) {
@@ -61,7 +62,7 @@ public class ProductServiceImpl implements ProductService {
             return repository.save(existingProduct);
         }
 
-        throw new ProductNotFoundException("Product not found with id: " + id);
+        throw new EntityNotFoundException("Product not found with id: " + id);
     }
 
     @Override
@@ -71,6 +72,6 @@ public class ProductServiceImpl implements ProductService {
             return;
         }
 
-        throw new ProductNotFoundException("Product not found with id: " + id);
+        throw new EntityNotFoundException("Product not found with id: " + id);
     }
 }

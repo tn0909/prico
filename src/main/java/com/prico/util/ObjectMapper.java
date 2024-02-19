@@ -1,10 +1,27 @@
 package com.prico.util;
 
-import com.prico.dto.ProductRequestDto;
-import com.prico.dto.ProductResponseDto;
+import com.prico.dto.*;
+import com.prico.entity.Brand;
 import com.prico.entity.Product;
+import com.prico.entity.ProductCategory;
+import com.prico.entity.Store;
 
 public class ObjectMapper {
+
+    public static BrandResponseDto toDto(Brand entity) {
+        BrandResponseDto dto = new BrandResponseDto();
+        dto.setId(entity.getId());
+        dto.setName(entity.getName());
+        dto.setDescription(entity.getDescription());
+        return dto;
+    }
+
+    public static Brand toEntity(BrandRequestDto dto) {
+        Brand entity = new Brand();
+        entity.setName(dto.getName());
+        entity.setDescription(dto.getDescription());
+        return entity;
+    }
 
     public static ProductResponseDto toDto(Product product) {
         ProductResponseDto dto = new ProductResponseDto();
@@ -19,5 +36,37 @@ public class ObjectMapper {
         product.setName(dto.getName());
         product.setDescription(dto.getDescription());
         return product;
+    }
+
+    public static CategoryResponseDto toDto(ProductCategory entity) {
+        CategoryResponseDto dto = new CategoryResponseDto();
+        dto.setId(entity.getId());
+        dto.setName(entity.getName());
+        dto.setDescription(entity.getDescription());
+        return dto;
+    }
+
+    public static ProductCategory toEntity(CategoryRequestDto dto) {
+        ProductCategory entity = new ProductCategory();
+        entity.setName(dto.getName());
+        entity.setDescription(dto.getDescription());
+        return entity;
+    }
+
+    public static StoreResponseDto toDto(Store entity) {
+        StoreResponseDto dto = new StoreResponseDto();
+        dto.setId(entity.getId());
+        dto.setName(entity.getName());
+        dto.setLocation(entity.getLocation());
+        dto.setWebsite(entity.getWebsite());
+        return dto;
+    }
+
+    public static Store toEntity(StoreRequestDto dto) {
+        Store entity = new Store();
+        entity.setName(dto.getName());
+        entity.setLocation(dto.getLocation());
+        entity.setWebsite(dto.getWebsite());
+        return entity;
     }
 }

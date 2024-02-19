@@ -1,10 +1,10 @@
 package com.prico.controller;
 
-import com.prico.dto.ProductRequestDto;
-import com.prico.dto.ProductResponseDto;
-import com.prico.entity.Product;
+import com.prico.dto.StoreRequestDto;
+import com.prico.dto.StoreResponseDto;
+import com.prico.entity.Store;
 import com.prico.exception.EntityNotFoundException;
-import com.prico.service.ProductService;
+import com.prico.service.StoreService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -21,95 +21,103 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(ProductController.class)
-public class ProductControllerTest {
+@WebMvcTest(StoreController.class)
+public class StoreControllerTest {
 
     @MockBean
-    private ProductService productService;
+    private StoreService storeService;
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
     public void testGetAll() throws Exception {
-        ProductResponseDto product1 = ProductResponseDto
+        StoreResponseDto store1 = StoreResponseDto
                 .builder()
                 .id(1L)
-                .name("Test Product 1")
-                .description("This is the 1st test product")
+                .name("Test Store 1")
+                .location("Test Store 1 location")
+                .website("store1.com")
                 .build();
 
-        ProductResponseDto product2 = ProductResponseDto
+        StoreResponseDto store2 = StoreResponseDto
                 .builder()
                 .id(2L)
-                .name("Test Product 2")
-                .description("This is the 2nd test product")
+                .name("Test Store 2")
+                .location("Test Store 2 location")
+                .website("store2.com")
                 .build();
 
-        when(productService
+        when(storeService
                 .getAll())
-                .thenReturn(Arrays.asList(product1, product2));
+                .thenReturn(Arrays.asList(store1, store2));
 
-        mockMvc.perform(get("/products"))
+        mockMvc.perform(get("/stores"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.[0].id").value(1))
-                .andExpect(jsonPath("$.[0].name").value("Test Product 1"))
-                .andExpect(jsonPath("$.[0].description").value("This is the 1st test product"))
+                .andExpect(jsonPath("$.[0].name").value("Test Store 1"))
+                .andExpect(jsonPath("$.[0].location").value("Test Store 1 location"))
+                .andExpect(jsonPath("$.[0].website").value("store1.com"))
                 .andExpect(jsonPath("$.[1].id").value(2))
-                .andExpect(jsonPath("$.[1].name").value("Test Product 2"))
-                .andExpect(jsonPath("$.[1].description").value("This is the 2nd test product"));
+                .andExpect(jsonPath("$.[1].name").value("Test Store 2"))
+                .andExpect(jsonPath("$.[1].location").value("Test Store 2 location"))
+                .andExpect(jsonPath("$.[1].website").value("store2.com"));
     }
 
     @Test
     public void testGetById() throws Exception {
-        ProductResponseDto productDto = new ProductResponseDto();
-        productDto.setId(1L);
-        productDto.setName("Test Product");
-        productDto.setDescription("This is a test product");
+        StoreResponseDto storeDto = StoreResponseDto
+                .builder()
+                .id(1L)
+                .name("Test Store")
+                .location("Test Store location")
+                .website("store.com")
+                .build();
 
-        when(productService
+        when(storeService
                 .getById(anyLong()))
-                .thenReturn(productDto);
+                .thenReturn(storeDto);
 
-        mockMvc.perform(get("/products/1"))
+        mockMvc.perform(get("/stores/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.name").value("Test Product"))
-                .andExpect(jsonPath("$.description").value("This is a test product"));
+                .andExpect(jsonPath("$.name").value("Test Store"))
+                .andExpect(jsonPath("$.location").value("Test Store location"))
+                .andExpect(jsonPath("$.website").value("store.com"));
     }
 
     @Test
     public void testGetById_WithNonExistentId() throws Exception {
         long nonExistentId = 100L;
-        when(productService
+        when(storeService
                 .getById(eq(nonExistentId)))
-                .thenThrow(new EntityNotFoundException("Invalid product"));
+                .thenThrow(new EntityNotFoundException("Invalid store"));
 
-        mockMvc.perform(get("/products/{id}", nonExistentId))
+        mockMvc.perform(get("/stores/{id}", nonExistentId))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.message").value("Invalid product"));
+                .andExpect(jsonPath("$.message").value("Invalid store"));
     }
 
     @Test
     public void testCreate() throws Exception {
-        mockMvc.perform(post("/products")
+        mockMvc.perform(post("/stores")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"name\":\"New Product\",\"description\":\"This is a test product\"}"))
+                .content("{\"name\":\"New Store\",\"location\":\"Store Location\",\"website\":\"store.com\"}"))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.message").value("Product has been created successfully"));
+                .andExpect(jsonPath("$.message").value("Store has been created successfully"));
 
-        verify(productService).create(any(ProductRequestDto.class));
+        verify(storeService).create(any(StoreRequestDto.class));
     }
 
     @Test
     public void testCreate_WithEmptyName() throws Exception {
-        String invalidJsonInput = "{\"name\":\"\",\"description\":\"This is a test product\"}";
+        String invalidJsonInput = "{\"name\":\"\",\"location\":\"Store location\",\"website\":\"store.com\"}";
 
-        mockMvc.perform(post("/products")
+        mockMvc.perform(post("/stores")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(invalidJsonInput))
                 .andExpect(status().isBadRequest())
@@ -123,47 +131,48 @@ public class ProductControllerTest {
 
     @Test
     public void testUpdate() throws Exception {
-        long productId = 1L;
-        Product updatedProduct = Product
+        long storeId = 1L;
+        Store updatedStore = Store
                 .builder()
-                .id(productId)
-                .name("Updated Product")
-                .description("Updated description")
+                .id(storeId)
+                .name("Updated Store")
+                .location("Updated Store location")
+                .website("updated-store.com")
                 .build();
-        when(productService
-                .update(eq(productId), any(ProductRequestDto.class)))
-                .thenReturn(updatedProduct);
+        when(storeService
+                .update(eq(storeId), any(StoreRequestDto.class)))
+                .thenReturn(updatedStore);
 
-        mockMvc.perform(put("/products/{id}", productId)
+        mockMvc.perform(put("/stores/{id}", storeId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"name\":\"Updated Product\",\"description\":\"Updated description\"}"))
+                .content("{\"name\":\"Updated Store\",\"location\":\"Updated location\",\"website\":\"updated-com.com\"}"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.message").value("Product has been updated successfully"));
+                .andExpect(jsonPath("$.message").value("Store has been updated successfully"));
 
-        verify(productService).update(eq(productId), any(ProductRequestDto.class));
+        verify(storeService).update(eq(storeId), any(StoreRequestDto.class));
     }
 
     @Test
     public void testUpdate_WithNonExistentId() throws Exception {
         long nonExistentId = 100L;
-        when(productService
+        when(storeService
                 .update(eq(nonExistentId), any()))
-                .thenThrow(new EntityNotFoundException("Invalid product"));
+                .thenThrow(new EntityNotFoundException("Invalid store"));
 
-        mockMvc.perform(put("/products/{id}", nonExistentId)
+        mockMvc.perform(put("/stores/{id}", nonExistentId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"name\":\"Updated Product\",\"description\":\"Updated description\"}"))
+                .content("{\"name\":\"Updated Store\",\"location\":\"Updated location\",\"website\":\"updated-com.com\"}"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.message").value("Invalid product"));
+                .andExpect(jsonPath("$.message").value("Invalid store"));
     }
 
     @Test
     public void testUpdate_WithEmptyName() throws Exception {
-        String invalidJsonInput = "{\"name\":\"\",\"description\":\"This is a test product\"}";
+        String invalidJsonInput = "{\"name\":\"\",\"location\":\"Updated location\",\"website\":\"updated-com.com\"}";
 
-        mockMvc.perform(put("/products/{id}", 1L)
+        mockMvc.perform(put("/stores/{id}", 1L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(invalidJsonInput))
                 .andExpect(status().isBadRequest())
@@ -176,30 +185,30 @@ public class ProductControllerTest {
 
     @Test
     public void testDelete() throws Exception {
-        long productId = 1L;
-        doNothing().when(productService).delete(productId);
+        long storeId = 1L;
+        doNothing().when(storeService).delete(storeId);
 
-        mockMvc.perform(delete("/products/{id}", productId)
+        mockMvc.perform(delete("/stores/{id}", storeId)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.message").value("Product has been deleted successfully"));
+                .andExpect(jsonPath("$.message").value("Store has been deleted successfully"));
 
-        verify(productService).delete(productId);
+        verify(storeService).delete(storeId);
     }
 
     @Test
     public void testDelete_WithNonExistentId() throws Exception {
         long nonExistentId = 100L;
-        doThrow(new EntityNotFoundException("Invalid product"))
-                .when(productService)
+        doThrow(new EntityNotFoundException("Invalid store"))
+                .when(storeService)
                 .delete(nonExistentId);
 
-        mockMvc.perform(delete("/products/{id}", nonExistentId)
+        mockMvc.perform(delete("/stores/{id}", nonExistentId)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.message").value("Invalid product"));
+                .andExpect(jsonPath("$.message").value("Invalid store"));
     }
 }
 

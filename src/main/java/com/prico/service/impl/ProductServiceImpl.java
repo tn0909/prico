@@ -1,10 +1,11 @@
-package com.prico.service;
+package com.prico.service.impl;
 
 import com.prico.dto.ProductRequestDto;
 import com.prico.dto.ProductResponseDto;
-import com.prico.exception.ProductNotFoundException;
+import com.prico.exception.EntityNotFoundException;
 import com.prico.entity.Product;
 import com.prico.repository.ProductRepository;
+import com.prico.service.ProductService;
 import com.prico.util.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ public class ProductServiceImpl implements ProductService {
             return ObjectMapper.toDto(optionalProduct.get());
         }
 
-        throw new ProductNotFoundException("Product not found with id: " + id);
+        throw new EntityNotFoundException("Product not found with id: " + id);
     }
 
     @Override
@@ -61,7 +62,7 @@ public class ProductServiceImpl implements ProductService {
             return repository.save(existingProduct);
         }
 
-        throw new ProductNotFoundException("Product not found with id: " + id);
+        throw new EntityNotFoundException("Product not found with id: " + id);
     }
 
     @Override
@@ -71,6 +72,6 @@ public class ProductServiceImpl implements ProductService {
             return;
         }
 
-        throw new ProductNotFoundException("Product not found with id: " + id);
+        throw new EntityNotFoundException("Product not found with id: " + id);
     }
 }

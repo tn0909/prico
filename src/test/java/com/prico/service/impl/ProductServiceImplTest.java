@@ -1,10 +1,11 @@
-package com.prico.service;
+package com.prico.service.impl;
 
 import com.prico.dto.ProductRequestDto;
 import com.prico.dto.ProductResponseDto;
 import com.prico.entity.Product;
-import com.prico.exception.ProductNotFoundException;
+import com.prico.exception.EntityNotFoundException;
 import com.prico.repository.ProductRepository;
+import com.prico.service.impl.ProductServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -79,7 +80,7 @@ public class ProductServiceImplTest {
         when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
         // When/Then
-        assertThrows(ProductNotFoundException.class, () -> productService.getById(productId));
+        assertThrows(EntityNotFoundException.class, () -> productService.getById(productId));
     }
 
     @Test
@@ -128,7 +129,7 @@ public class ProductServiceImplTest {
         when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
         // When/Then
-        assertThrows(ProductNotFoundException.class, () -> productService.update(productId, updatedProduct));
+        assertThrows(EntityNotFoundException.class, () -> productService.update(productId, updatedProduct));
     }
 
     @Test
@@ -151,7 +152,7 @@ public class ProductServiceImplTest {
         when(productRepository.existsById(productId)).thenReturn(false);
 
         // When/Then
-        assertThrows(ProductNotFoundException.class, () -> productService.delete(productId));
+        assertThrows(EntityNotFoundException.class, () -> productService.delete(productId));
     }
 
 }

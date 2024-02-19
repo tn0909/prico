@@ -2,7 +2,7 @@ package com.prico.handler;
 
 import com.prico.dto.ApiError;
 import com.prico.dto.ApiResponse;
-import com.prico.exception.EntityNotFoundException;
+import com.prico.exception.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -21,9 +21,9 @@ import java.util.List;
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
-    @ExceptionHandler(EntityNotFoundException.class)
+    @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiResponse<?> handleProductNotFoundException(EntityNotFoundException ex) {
+    public ApiResponse<?> handleProductNotFoundException(ResourceNotFoundException ex) {
         ApiResponse<?> response = ApiResponse
             .<List<String>>builder()
             .status("error")

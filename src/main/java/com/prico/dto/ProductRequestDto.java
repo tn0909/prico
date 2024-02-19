@@ -14,4 +14,10 @@ public class ProductRequestDto {
     private String name;
 
     private String description;
+
+    private String imageUrl;
+
+    private Long brandId;
+
+    private Long categoryId;
 }

@@ -2,7 +2,7 @@ package com.prico.service;
 
 import com.prico.dto.CategoryRequestDto;
 import com.prico.dto.CategoryResponseDto;
-import com.prico.entity.Category;
+import com.prico.model.Category;
 
 import java.util.List;
 

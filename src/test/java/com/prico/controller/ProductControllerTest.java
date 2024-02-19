@@ -2,8 +2,8 @@ package com.prico.controller;
 
 import com.prico.dto.ProductRequestDto;
 import com.prico.dto.ProductResponseDto;
-import com.prico.entity.Product;
-import com.prico.exception.EntityNotFoundException;
+import com.prico.model.Product;
+import com.prico.exception.ResourceNotFoundException;
 import com.prico.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,7 +85,7 @@ public class ProductControllerTest {
         long nonExistentId = 100L;
         when(productService
                 .getById(eq(nonExistentId)))
-                .thenThrow(new EntityNotFoundException("Invalid product"));
+                .thenThrow(new ResourceNotFoundException("Invalid product"));
 
         mockMvc.perform(get("/products/{id}", nonExistentId))
                 .andExpect(status().isNotFound())
@@ -149,7 +149,7 @@ public class ProductControllerTest {
         long nonExistentId = 100L;
         when(productService
                 .update(eq(nonExistentId), any()))
-                .thenThrow(new EntityNotFoundException("Invalid product"));
+                .thenThrow(new ResourceNotFoundException("Invalid product"));
 
         mockMvc.perform(put("/products/{id}", nonExistentId)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -191,7 +191,7 @@ public class ProductControllerTest {
     @Test
     public void testDelete_WithNonExistentId() throws Exception {
         long nonExistentId = 100L;
-        doThrow(new EntityNotFoundException("Invalid product"))
+        doThrow(new ResourceNotFoundException("Invalid product"))
                 .when(productService)
                 .delete(nonExistentId);
 

@@ -1,6 +1,6 @@
 package com.prico.repository;
 
-import com.prico.entity.Brand;
+import com.prico.model.Brand;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -2,8 +2,8 @@ package com.prico.controller;
 
 import com.prico.dto.BrandRequestDto;
 import com.prico.dto.BrandResponseDto;
-import com.prico.entity.Brand;
-import com.prico.exception.EntityNotFoundException;
+import com.prico.model.Brand;
+import com.prico.exception.ResourceNotFoundException;
 import com.prico.service.BrandService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,7 +85,7 @@ public class BrandControllerTest {
         long nonExistentId = 100L;
         when(brandService
                 .getById(eq(nonExistentId)))
-                .thenThrow(new EntityNotFoundException("Invalid brand"));
+                .thenThrow(new ResourceNotFoundException("Invalid brand"));
 
         mockMvc.perform(get("/brands/{id}", nonExistentId))
                 .andExpect(status().isNotFound())
@@ -149,7 +149,7 @@ public class BrandControllerTest {
         long nonExistentId = 100L;
         when(brandService
                 .update(eq(nonExistentId), any()))
-                .thenThrow(new EntityNotFoundException("Invalid brand"));
+                .thenThrow(new ResourceNotFoundException("Invalid brand"));
 
         mockMvc.perform(put("/brands/{id}", nonExistentId)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -191,7 +191,7 @@ public class BrandControllerTest {
     @Test
     public void testDelete_WithNonExistentId() throws Exception {
         long nonExistentId = 100L;
-        doThrow(new EntityNotFoundException("Invalid brand"))
+        doThrow(new ResourceNotFoundException("Invalid brand"))
                 .when(brandService)
                 .delete(nonExistentId);
 

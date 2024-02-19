@@ -1,5 +1,7 @@
 package com.prico.dto;
 
+import com.prico.model.Brand;
+import com.prico.model.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,4 +17,6 @@ public class ProductResponseDto {
     private Long id;
     private String name;
     private String description;
+    private CategoryResponseDto category;
+    private BrandResponseDto brand;
 }

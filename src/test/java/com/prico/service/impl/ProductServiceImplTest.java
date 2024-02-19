@@ -2,10 +2,9 @@ package com.prico.service.impl;
 
 import com.prico.dto.ProductRequestDto;
 import com.prico.dto.ProductResponseDto;
-import com.prico.entity.Product;
-import com.prico.exception.EntityNotFoundException;
+import com.prico.model.Product;
+import com.prico.exception.ResourceNotFoundException;
 import com.prico.repository.ProductRepository;
-import com.prico.service.impl.ProductServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -80,13 +79,17 @@ public class ProductServiceImplTest {
         when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
         // When/Then
-        assertThrows(EntityNotFoundException.class, () -> productService.getById(productId));
+        assertThrows(ResourceNotFoundException.class, () -> productService.getById(productId));
     }
 
     @Test
     public void testCreate() {
         // Given
-        ProductRequestDto newProduct = new ProductRequestDto("New Product", "Product description");
+        ProductRequestDto newProduct = ProductRequestDto
+                .builder()
+                .name("New Product")
+                .description("Product description")
+                .build();
         Product savedProduct = new Product(1L, "New Product", "Product description");
         when(productRepository.save(any())).thenReturn(savedProduct);
 
@@ -104,7 +107,11 @@ public class ProductServiceImplTest {
     public void testUpdate() {
         // Given
         long productId = 1L;
-        ProductRequestDto updatedProduct = new ProductRequestDto("Updated Product", "Product description");
+        ProductRequestDto updatedProduct = ProductRequestDto
+                .builder()
+                .name("Updated Product")
+                .description("Product description")
+                .build();
         Product retrievedProduct = new Product(1L, "Original Product", "Original description");
         Product savedProduct = new Product(1L, "Updated Product", "Product description");
 
@@ -125,11 +132,15 @@ public class ProductServiceImplTest {
     public void testUpdate_WhenProductNotFound_ThrowNotFoundException() {
         // Given
         long productId = 1L;
-        ProductRequestDto updatedProduct = new ProductRequestDto("Updated Product", "Product description");
+        ProductRequestDto updatedProduct = ProductRequestDto
+                .builder()
+                .name("Updated Product")
+                .description("Product description")
+                .build();
         when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
         // When/Then
-        assertThrows(EntityNotFoundException.class, () -> productService.update(productId, updatedProduct));
+        assertThrows(ResourceNotFoundException.class, () -> productService.update(productId, updatedProduct));
     }
 
     @Test
@@ -152,7 +163,7 @@ public class ProductServiceImplTest {
         when(productRepository.existsById(productId)).thenReturn(false);
 
         // When/Then
-        assertThrows(EntityNotFoundException.class, () -> productService.delete(productId));
+        assertThrows(ResourceNotFoundException.class, () -> productService.delete(productId));
     }
 
 }

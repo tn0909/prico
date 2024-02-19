@@ -2,7 +2,7 @@ package com.prico.service.impl;
 
 import com.prico.dto.CategoryRequestDto;
 import com.prico.dto.CategoryResponseDto;
-import com.prico.entity.ProductCategory;
+import com.prico.entity.Category;
 import com.prico.exception.EntityNotFoundException;
 import com.prico.repository.CategoryRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,9 +38,9 @@ public class CategoryServiceImplTest {
     @Test
     public void testGetAll() {
         // Given
-        ProductCategory productCategory1 = new ProductCategory(1L, "ProductCategory 1", "ProductCategory 1 description");
-        ProductCategory productCategory2 = new ProductCategory(2L, "ProductCategory 2", "ProductCategory 2 description");
-        when(categoryRepository.findAll()).thenReturn(Arrays.asList(productCategory1, productCategory2));
+        Category category1 = new Category(1L, "ProductCategory 1", "ProductCategory 1 description");
+        Category category2 = new Category(2L, "ProductCategory 2", "ProductCategory 2 description");
+        when(categoryRepository.findAll()).thenReturn(Arrays.asList(category1, category2));
 
         // When
         List<CategoryResponseDto> results = productCategoryService.getAll();
@@ -60,8 +60,8 @@ public class CategoryServiceImplTest {
     public void testGetById() {
         // Given
         long productCategoryId = 1L;
-        ProductCategory mockProductCategory = new ProductCategory(productCategoryId, "ProductCategory 1", "ProductCategory description");
-        when(categoryRepository.findById(productCategoryId)).thenReturn(Optional.of(mockProductCategory));
+        Category mockCategory = new Category(productCategoryId, "ProductCategory 1", "ProductCategory description");
+        when(categoryRepository.findById(productCategoryId)).thenReturn(Optional.of(mockCategory));
 
         // When
         CategoryResponseDto result = productCategoryService.getById(productCategoryId);
@@ -87,11 +87,11 @@ public class CategoryServiceImplTest {
     public void testCreate() {
         // Given
         CategoryRequestDto newProductCategory = new CategoryRequestDto("New ProductCategory", "ProductCategory description");
-        ProductCategory savedProductCategory = new ProductCategory(1L, "New ProductCategory", "ProductCategory description");
-        when(categoryRepository.save(any())).thenReturn(savedProductCategory);
+        Category savedCategory = new Category(1L, "New ProductCategory", "ProductCategory description");
+        when(categoryRepository.save(any())).thenReturn(savedCategory);
 
         // When
-        ProductCategory result = productCategoryService.create(newProductCategory);
+        Category result = productCategoryService.create(newProductCategory);
 
         // Then
         assertThat(result).isNotNull();
@@ -105,14 +105,14 @@ public class CategoryServiceImplTest {
         // Given
         long productCategoryId = 1L;
         CategoryRequestDto updatedProductCategory = new CategoryRequestDto("Updated ProductCategory", "ProductCategory description");
-        ProductCategory retrievedProductCategory = new ProductCategory(1L, "Original ProductCategory", "Original description");
-        ProductCategory savedProductCategory = new ProductCategory(1L, "Updated ProductCategory", "ProductCategory description");
+        Category retrievedCategory = new Category(1L, "Original ProductCategory", "Original description");
+        Category savedCategory = new Category(1L, "Updated ProductCategory", "ProductCategory description");
 
-        when(categoryRepository.findById(productCategoryId)).thenReturn(Optional.of(retrievedProductCategory));
-        when(categoryRepository.save(any())).thenReturn(savedProductCategory);
+        when(categoryRepository.findById(productCategoryId)).thenReturn(Optional.of(retrievedCategory));
+        when(categoryRepository.save(any())).thenReturn(savedCategory);
 
         // When
-        ProductCategory result = productCategoryService.update(productCategoryId, updatedProductCategory);
+        Category result = productCategoryService.update(productCategoryId, updatedProductCategory);
 
         // Then
         assertThat(result).isNotNull();

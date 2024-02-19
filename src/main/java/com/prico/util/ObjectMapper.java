@@ -3,7 +3,7 @@ package com.prico.util;
 import com.prico.dto.*;
 import com.prico.entity.Brand;
 import com.prico.entity.Product;
-import com.prico.entity.ProductCategory;
+import com.prico.entity.Category;
 import com.prico.entity.Store;
 
 public class ObjectMapper {
@@ -38,7 +38,7 @@ public class ObjectMapper {
         return product;
     }
 
-    public static CategoryResponseDto toDto(ProductCategory entity) {
+    public static CategoryResponseDto toDto(Category entity) {
         CategoryResponseDto dto = new CategoryResponseDto();
         dto.setId(entity.getId());
         dto.setName(entity.getName());
@@ -46,8 +46,8 @@ public class ObjectMapper {
         return dto;
     }
 
-    public static ProductCategory toEntity(CategoryRequestDto dto) {
-        ProductCategory entity = new ProductCategory();
+    public static Category toEntity(CategoryRequestDto dto) {
+        Category entity = new Category();
         entity.setName(dto.getName());
         entity.setDescription(dto.getDescription());
         return entity;

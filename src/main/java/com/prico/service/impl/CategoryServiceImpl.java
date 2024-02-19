@@ -2,7 +2,7 @@ package com.prico.service.impl;
 
 import com.prico.dto.CategoryRequestDto;
 import com.prico.dto.CategoryResponseDto;
-import com.prico.entity.ProductCategory;
+import com.prico.entity.Category;
 import com.prico.exception.EntityNotFoundException;
 import com.prico.repository.CategoryRepository;
 import com.prico.service.CategoryService;
@@ -33,7 +33,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponseDto getById(Long id) {
-        Optional<ProductCategory> optionalProductCategory = repository.findById(id);
+        Optional<Category> optionalProductCategory = repository.findById(id);
 
         if (optionalProductCategory.isPresent()) {
             return ObjectMapper.toDto(optionalProductCategory.get());
@@ -43,23 +43,23 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public ProductCategory create(CategoryRequestDto productCategoryRequest) {
-        ProductCategory productCategory = new ProductCategory();
-        productCategory.setName(productCategoryRequest.getName());
-        productCategory.setDescription(productCategoryRequest.getDescription());
+    public Category create(CategoryRequestDto productCategoryRequest) {
+        Category category = new Category();
+        category.setName(productCategoryRequest.getName());
+        category.setDescription(productCategoryRequest.getDescription());
 
-        return repository.save(productCategory);
+        return repository.save(category);
     }
 
     @Override
-    public ProductCategory update(Long id, CategoryRequestDto productCategoryRequest) {
-        ProductCategory existingProductCategory = repository.findById(id).orElse(null);
+    public Category update(Long id, CategoryRequestDto productCategoryRequest) {
+        Category existingCategory = repository.findById(id).orElse(null);
 
-        if (existingProductCategory != null) {
-            existingProductCategory.setName(productCategoryRequest.getName());
-            existingProductCategory.setDescription(productCategoryRequest.getDescription());
+        if (existingCategory != null) {
+            existingCategory.setName(productCategoryRequest.getName());
+            existingCategory.setDescription(productCategoryRequest.getDescription());
 
-            return repository.save(existingProductCategory);
+            return repository.save(existingCategory);
         }
 
         throw new EntityNotFoundException("ProductCategory not found with id: " + id);

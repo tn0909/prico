@@ -3,7 +3,7 @@ package com.prico.util;
 import com.prico.dto.*;
 import com.prico.entity.Brand;
 import com.prico.entity.Product;
-import com.prico.entity.ProductCategory;
+import com.prico.entity.Category;
 import com.prico.entity.Store;
 import org.junit.jupiter.api.Test;
 
@@ -69,7 +69,7 @@ public class ObjectMapperTest {
     @Test
     public void testToDto_ProductCategory() {
         // Given
-        ProductCategory entity = new ProductCategory(1L, "Product category 1", "Product category description");
+        Category entity = new Category(1L, "Product category 1", "Product category description");
 
         // When
         CategoryResponseDto dto = ObjectMapper.toDto(entity);
@@ -86,7 +86,7 @@ public class ObjectMapperTest {
         CategoryRequestDto dto = new CategoryRequestDto("Product category 1", "Product category description");
 
         // When
-        ProductCategory entity = ObjectMapper.toEntity(dto);
+        Category entity = ObjectMapper.toEntity(dto);
 
         // Then
         assertEquals(dto.getName(), entity.getName());

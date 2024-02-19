@@ -3,7 +3,7 @@ package com.prico.controller;
 import com.prico.dto.ApiResponse;
 import com.prico.dto.CategoryRequestDto;
 import com.prico.dto.CategoryResponseDto;
-import com.prico.entity.ProductCategory;
+import com.prico.entity.Category;
 import com.prico.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ public class CategoryController {
     public ResponseEntity<ApiResponse<?>> create(@Valid @RequestBody CategoryRequestDto productCategory) {
         service.create(productCategory);
 
-        ApiResponse<ProductCategory> response = new ApiResponse<>();
+        ApiResponse<Category> response = new ApiResponse<>();
         response.setMessage("Product Category has been created successfully");
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -49,7 +49,7 @@ public class CategoryController {
                                                  @Valid @RequestBody CategoryRequestDto productCategory) {
         service.update(id, productCategory);
 
-        ApiResponse<ProductCategory> response = new ApiResponse<>();
+        ApiResponse<Category> response = new ApiResponse<>();
         response.setMessage("Product Category has been updated successfully");
 
         return ResponseEntity.ok(response);
@@ -59,7 +59,7 @@ public class CategoryController {
     public ResponseEntity<ApiResponse<?>> delete(@PathVariable Long id) {
         service.delete(id);
 
-        ApiResponse<ProductCategory> response = new ApiResponse<>();
+        ApiResponse<Category> response = new ApiResponse<>();
         response.setMessage("Product Category has been deleted successfully");
 
         return ResponseEntity.ok(response);

@@ -1,9 +1,9 @@
 package com.prico.repository;
 
-import com.prico.entity.ProductCategory;
+import com.prico.entity.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CategoryRepository extends JpaRepository<ProductCategory, Long> {
+public interface CategoryRepository extends JpaRepository<Category, Long> {
 }

@@ -1,10 +1,11 @@
-package com.prico.service;
+package com.prico.service.impl;
 
-import com.prico.dto.ProductRequest;
-import com.prico.dto.ProductResponse;
+import com.prico.dto.ProductRequestDto;
+import com.prico.dto.ProductResponseDto;
 import com.prico.entity.Product;
-import com.prico.exception.ProductNotFoundException;
+import com.prico.exception.EntityNotFoundException;
 import com.prico.repository.ProductRepository;
+import com.prico.service.impl.ProductServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -42,7 +43,7 @@ public class ProductServiceImplTest {
         when(productRepository.findAll()).thenReturn(Arrays.asList(product1, product2));
 
         // When
-        List<ProductResponse> results = productService.getAll();
+        List<ProductResponseDto> results = productService.getAll();
 
         // Then
         assertThat(results).isNotNull();
@@ -63,7 +64,7 @@ public class ProductServiceImplTest {
         when(productRepository.findById(productId)).thenReturn(Optional.of(mockProduct));
 
         // When
-        ProductResponse result = productService.getById(productId);
+        ProductResponseDto result = productService.getById(productId);
 
         // Then
         assertThat(result).isNotNull();
@@ -79,13 +80,13 @@ public class ProductServiceImplTest {
         when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
         // When/Then
-        assertThrows(ProductNotFoundException.class, () -> productService.getById(productId));
+        assertThrows(EntityNotFoundException.class, () -> productService.getById(productId));
     }
 
     @Test
     public void testCreate() {
         // Given
-        ProductRequest newProduct = new ProductRequest("New Product", "Product description");
+        ProductRequestDto newProduct = new ProductRequestDto("New Product", "Product description");
         Product savedProduct = new Product(1L, "New Product", "Product description");
         when(productRepository.save(any())).thenReturn(savedProduct);
 
@@ -103,7 +104,7 @@ public class ProductServiceImplTest {
     public void testUpdate() {
         // Given
         long productId = 1L;
-        ProductRequest updatedProduct = new ProductRequest("Updated Product", "Product description");
+        ProductRequestDto updatedProduct = new ProductRequestDto("Updated Product", "Product description");
         Product retrievedProduct = new Product(1L, "Original Product", "Original description");
         Product savedProduct = new Product(1L, "Updated Product", "Product description");
 
@@ -124,11 +125,11 @@ public class ProductServiceImplTest {
     public void testUpdate_WhenProductNotFound_ThrowNotFoundException() {
         // Given
         long productId = 1L;
-        ProductRequest updatedProduct = new ProductRequest("Updated Product", "Product description");
+        ProductRequestDto updatedProduct = new ProductRequestDto("Updated Product", "Product description");
         when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
         // When/Then
-        assertThrows(ProductNotFoundException.class, () -> productService.update(productId, updatedProduct));
+        assertThrows(EntityNotFoundException.class, () -> productService.update(productId, updatedProduct));
     }
 
     @Test
@@ -151,7 +152,7 @@ public class ProductServiceImplTest {
         when(productRepository.existsById(productId)).thenReturn(false);
 
         // When/Then
-        assertThrows(ProductNotFoundException.class, () -> productService.delete(productId));
+        assertThrows(EntityNotFoundException.class, () -> productService.delete(productId));
     }
 
 }

@@ -15,6 +15,7 @@ This project aims to develop a RESTful APIs for a price comparison website. The 
 - **MySQL**: Database management system for storing product and store information
 - **JUnit and Mockito**: Testing frameworks for unit and integration testing
 - **Maven**: Dependency management and build automation
+- **GitHub Actions**: CI framework for automating the process of testing code changes upon each push to the repository
 
 ## Installation
 

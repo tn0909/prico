@@ -6,8 +6,7 @@ This project aims to develop a RESTful APIs for a price comparison website. The 
 
 - **Product Search**: Search for products by name, category, brand, etc.
 - **Price Comparison**: Compare prices for the same product from different stores.
-- **Store Listings**: Retrieve a list of stores offering a particular product.
-- **Admin Operations**: CRUD operations for managing products, stores, and reviews.
+- **Admin Operations**: CRUD operations for managing products and stores.
 
 ## Technologies Used
 

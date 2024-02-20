@@ -1,7 +1,7 @@
 package com.prico.service;
 
-import com.prico.dto.StoreRequestDto;
-import com.prico.dto.StoreResponseDto;
+import com.prico.dto.crud.StoreRequestDto;
+import com.prico.dto.crud.StoreResponseDto;
 import com.prico.model.Store;
 
 import java.util.List;

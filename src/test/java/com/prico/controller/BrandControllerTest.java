@@ -1,7 +1,7 @@
 package com.prico.controller;
 
-import com.prico.dto.BrandRequestDto;
-import com.prico.dto.BrandResponseDto;
+import com.prico.dto.crud.BrandRequestDto;
+import com.prico.dto.crud.BrandResponseDto;
 import com.prico.model.Brand;
 import com.prico.exception.ResourceNotFoundException;
 import com.prico.service.BrandService;

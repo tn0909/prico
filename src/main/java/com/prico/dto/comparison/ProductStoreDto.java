@@ -1,4 +1,4 @@
-package com.prico.dto;
+package com.prico.dto.comparison;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BrandResponseDto {
+public class ProductStoreDto {
+
     private Long id;
+
     private String name;
-    private String description;
+
+    private String url;
+
+    private String imageUrl;
+
+    private Long price;
 }

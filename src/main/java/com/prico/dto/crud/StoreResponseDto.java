@@ -1,21 +1,21 @@
-package com.prico.dto;
+package com.prico.dto.crud;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class StoreRequestDto {
+public class StoreResponseDto {
 
-    @NotBlank(message = "Name should not be NULL or EMPTY")
+    private Long id;
+
     private String name;
 
     private String location;
+
     private String website;
 }

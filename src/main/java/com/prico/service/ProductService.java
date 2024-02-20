@@ -1,7 +1,8 @@
 package com.prico.service;
 
-import com.prico.dto.ProductRequestDto;
-import com.prico.dto.ProductResponseDto;
+import com.prico.dto.crud.ProductRequestDto;
+import com.prico.dto.crud.ProductResponseDto;
+import com.prico.dto.comparison.ProductVariationResponseDto;
 import com.prico.dto.SearchRequestDto;
 import com.prico.model.Product;
 
@@ -11,8 +12,6 @@ public interface ProductService {
 
     List<ProductResponseDto> getAll();
 
-    List<ProductResponseDto> search(SearchRequestDto searchRequest);
-
     ProductResponseDto getById(Long id);
 
     Product create(ProductRequestDto product);
@@ -20,4 +19,8 @@ public interface ProductService {
     Product update(Long id, ProductRequestDto product);
 
     void delete(Long id);
+
+    List<ProductResponseDto> search(SearchRequestDto searchRequest);
+
+    ProductVariationResponseDto getProductVariation(Long productId);
 }

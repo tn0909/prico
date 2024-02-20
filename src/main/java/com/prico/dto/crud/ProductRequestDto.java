@@ -1,4 +1,4 @@
-package com.prico.dto;
+package com.prico.dto.crud;
 
 import lombok.*;
 

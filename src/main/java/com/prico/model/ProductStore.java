@@ -1,24 +1,26 @@
 package com.prico.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Price {
+@Builder
+public class ProductStore {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private double price;
-    private String currency;
-    private Date dateUpdated;
+    private String name;
+    private String url;
+    private String imageUrl;
+    private Long price;
 
     @ManyToOne
     @JoinColumn(name = "product_id")

@@ -1,22 +1,19 @@
-package com.prico.model;
+package com.prico.dto.crud;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
-@Entity
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class Category {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class BrandRequestDto {
 
+    @NotBlank(message = "Name should not be NULL or EMPTY")
     private String name;
 
     private String description;

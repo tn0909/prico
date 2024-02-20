@@ -1,4 +1,4 @@
-package com.prico.dto;
+package com.prico.dto.crud;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,10 +11,12 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CategoryRequestDto {
+public class StoreRequestDto {
 
     @NotBlank(message = "Name should not be NULL or EMPTY")
     private String name;
 
-    private String description;
+    private String location;
+
+    private String website;
 }

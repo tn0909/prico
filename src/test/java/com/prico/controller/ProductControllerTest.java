@@ -1,7 +1,7 @@
 package com.prico.controller;
 
-import com.prico.dto.ProductRequestDto;
-import com.prico.dto.ProductResponseDto;
+import com.prico.dto.crud.ProductRequestDto;
+import com.prico.dto.crud.ProductResponseDto;
 import com.prico.model.Product;
 import com.prico.exception.ResourceNotFoundException;
 import com.prico.service.ProductService;

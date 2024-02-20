@@ -1,7 +1,7 @@
 package com.prico.service.impl;
 
-import com.prico.dto.StoreRequestDto;
-import com.prico.dto.StoreResponseDto;
+import com.prico.dto.crud.StoreRequestDto;
+import com.prico.dto.crud.StoreResponseDto;
 import com.prico.model.Store;
 import com.prico.exception.ResourceNotFoundException;
 import com.prico.repository.StoreRepository;

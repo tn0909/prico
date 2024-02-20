@@ -23,7 +23,7 @@ This project aims to develop a RESTful APIs for a price comparison website. The 
 
 - Java Development Kit (JDK) 8 or later
 - Maven
-- MySQL Server
+- MySQL
 
 ### Steps
 
@@ -53,14 +53,14 @@ The API documentation is available at `http://localhost:8080/swagger-ui/`. Use t
 
 ## Usage
 
-The API supports various endpoints for searching products, retrieving price comparisons, managing stores, and more. Refer to the API documentation for details on available endpoints, request/response formats, and authentication requirements.
+The API supports various endpoints for searching products, retrieving price comparisons, managing products, and more. Refer to the API documentation for details on available endpoints, request/response formats, and authentication requirements.
 
 ## Contributing
 
 Contributions are welcome! If you have suggestions for improving the API or adding new features, please open an issue to discuss or submit a pull request with your changes.
 
 ## License
-
+Please credit the author if you use this project or any of its components in your own work.
 
 ## Acknowledgments
 - Libraries and frameworks used

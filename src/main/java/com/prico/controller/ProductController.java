@@ -70,6 +70,6 @@ public class ProductController {
     @PostMapping("/search")
     public ResponseEntity<List<ProductResponseDto>> search(@Valid @RequestBody SearchRequestDto search) {
         List<ProductResponseDto> products = service.search(search);
-        return ResponseEntity.ok(Collections.emptyList());
+        return ResponseEntity.ok(products);
     }
 }

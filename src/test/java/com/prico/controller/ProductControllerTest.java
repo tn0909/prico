@@ -239,7 +239,7 @@ public class ProductControllerTest {
 
     @Test
     public void testSearch_WithoutSearchCriteria() throws Exception {
-        String searchJson = "{}";
+        String searchJson = "{\"name\":\"\",\"category\":\"\",\"brand\": \"\"}";
 
         mockMvc.perform(post("/products/search")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -249,8 +249,8 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.status").value("error"))
                 .andExpect(jsonPath("$.message").value("Validation failed"))
                 .andExpect(jsonPath("$.errors").isArray())
-                .andExpect(jsonPath("$.errors[0].field").value("name"))
-                .andExpect(jsonPath("$.errors[0].message").value("Name should not be NULL or EMPTY"));
+                .andExpect(jsonPath("$.errors[0].field").value(""))
+                .andExpect(jsonPath("$.errors[0].message").value("At least one property must have data"));
     }
 }
 

@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,4 +13,6 @@ public class ProductResponseDto {
     private Long id;
     private String name;
     private String description;
+    private CategoryResponseDto category;
+    private BrandResponseDto brand;
 }

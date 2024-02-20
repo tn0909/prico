@@ -2,8 +2,8 @@ package com.prico.controller;
 
 import com.prico.dto.ProductRequestDto;
 import com.prico.dto.ProductResponseDto;
-import com.prico.entity.Product;
-import com.prico.exception.EntityNotFoundException;
+import com.prico.model.Product;
+import com.prico.exception.ResourceNotFoundException;
 import com.prico.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,7 +85,7 @@ public class ProductControllerTest {
         long nonExistentId = 100L;
         when(productService
                 .getById(eq(nonExistentId)))
-                .thenThrow(new EntityNotFoundException("Invalid product"));
+                .thenThrow(new ResourceNotFoundException("Invalid product"));
 
         mockMvc.perform(get("/products/{id}", nonExistentId))
                 .andExpect(status().isNotFound())
@@ -149,7 +149,7 @@ public class ProductControllerTest {
         long nonExistentId = 100L;
         when(productService
                 .update(eq(nonExistentId), any()))
-                .thenThrow(new EntityNotFoundException("Invalid product"));
+                .thenThrow(new ResourceNotFoundException("Invalid product"));
 
         mockMvc.perform(put("/products/{id}", nonExistentId)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -191,7 +191,7 @@ public class ProductControllerTest {
     @Test
     public void testDelete_WithNonExistentId() throws Exception {
         long nonExistentId = 100L;
-        doThrow(new EntityNotFoundException("Invalid product"))
+        doThrow(new ResourceNotFoundException("Invalid product"))
                 .when(productService)
                 .delete(nonExistentId);
 
@@ -200,6 +200,57 @@ public class ProductControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.message").value("Invalid product"));
+    }
+
+    @Test
+    public void testSearch() throws Exception {
+        ProductResponseDto product1 = ProductResponseDto
+                .builder()
+                .id(1L)
+                .name("Test Product 1")
+                .description("This is the 1st test product")
+                .build();
+
+        ProductResponseDto product2 = ProductResponseDto
+                .builder()
+                .id(2L)
+                .name("Test Product 2")
+                .description("This is the 2nd test product")
+                .build();
+
+        when(productService
+                .search(any()))
+                .thenReturn(Arrays.asList(product1, product2));
+
+        String searchJson = "{\"name\":\"Test\",\"category\":\"Category\",\"brand\": \"Brand\"}";
+
+        mockMvc.perform(post("/products/search")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(searchJson))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.[0].id").value(1))
+                .andExpect(jsonPath("$.[0].name").value("Test Product 1"))
+                .andExpect(jsonPath("$.[0].description").value("This is the 1st test product"))
+                .andExpect(jsonPath("$.[1].id").value(2))
+                .andExpect(jsonPath("$.[1].name").value("Test Product 2"))
+                .andExpect(jsonPath("$.[1].description").value("This is the 2nd test product"));
+    }
+
+    @Test
+    public void testSearch_WithoutSearchCriteria() throws Exception {
+        String searchJson = "{\"name\":\"\",\"category\":\"\",\"brand\": \"\"}";
+
+        mockMvc.perform(post("/products/search")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(searchJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value("error"))
+                .andExpect(jsonPath("$.message").value("Validation failed"))
+                .andExpect(jsonPath("$.errors").isArray())
+                .andExpect(jsonPath("$.errors[0].field").value(""))
+                .andExpect(jsonPath("$.errors[0].message").value("At least one property must have data"));
     }
 }
 

@@ -1,4 +1,4 @@
-package com.prico.entity;
+package com.prico.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +19,7 @@ public class Product {
     private Long id;
     private String name;
     private String description;
+    private String imageUrl;
 
     @ManyToOne
     @JoinColumn(name = "category_id")

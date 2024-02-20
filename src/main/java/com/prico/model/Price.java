@@ -1,4 +1,4 @@
-package com.prico.entity;
+package com.prico.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

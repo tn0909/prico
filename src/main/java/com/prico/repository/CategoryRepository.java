@@ -1,6 +1,6 @@
 package com.prico.repository;
 
-import com.prico.entity.Category;
+import com.prico.model.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -2,7 +2,7 @@ package com.prico.handler;
 
 import com.prico.dto.ApiError;
 import com.prico.dto.ApiResponse;
-import com.prico.exception.EntityNotFoundException;
+import com.prico.exception.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -19,11 +19,11 @@ import java.util.List;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @Slf4j
 @RestControllerAdvice
-public class ApiExceptionHandler {
+public class GlobalExceptionHandler {
 
-    @ExceptionHandler(EntityNotFoundException.class)
+    @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiResponse<?> handleProductNotFoundException(EntityNotFoundException ex) {
+    public ApiResponse<?> handleProductNotFoundException(ResourceNotFoundException ex) {
         ApiResponse<?> response = ApiResponse
             .<List<String>>builder()
             .status("error")
@@ -39,7 +39,7 @@ public class ApiExceptionHandler {
         List<ApiError> errors = new ArrayList<>();
 
         ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
+            String fieldName = error instanceof FieldError ? ((FieldError) error).getField() : "";
             String errorMessage = error.getDefaultMessage();
             errors.add(new ApiError(fieldName, errorMessage));
         });

@@ -1,10 +1,10 @@
 package com.prico.util;
 
 import com.prico.dto.*;
-import com.prico.entity.Brand;
-import com.prico.entity.Product;
-import com.prico.entity.Category;
-import com.prico.entity.Store;
+import com.prico.model.Brand;
+import com.prico.model.Product;
+import com.prico.model.Category;
+import com.prico.model.Store;
 
 public class ObjectMapper {
 
@@ -28,6 +28,15 @@ public class ObjectMapper {
         dto.setId(product.getId());
         dto.setName(product.getName());
         dto.setDescription(product.getDescription());
+
+        if (product.getBrand() != null) {
+            dto.setBrand(toDto(product.getBrand()));
+        }
+
+        if (product.getCategory() != null) {
+            dto.setCategory(toDto(product.getCategory()));
+        }
+
         return dto;
     }
 

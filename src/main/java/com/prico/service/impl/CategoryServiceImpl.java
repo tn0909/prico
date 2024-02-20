@@ -2,8 +2,8 @@ package com.prico.service.impl;
 
 import com.prico.dto.CategoryRequestDto;
 import com.prico.dto.CategoryResponseDto;
-import com.prico.entity.Category;
-import com.prico.exception.EntityNotFoundException;
+import com.prico.model.Category;
+import com.prico.exception.ResourceNotFoundException;
 import com.prico.repository.CategoryRepository;
 import com.prico.service.CategoryService;
 import com.prico.util.ObjectMapper;
@@ -39,7 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
             return ObjectMapper.toDto(optionalProductCategory.get());
         }
 
-        throw new EntityNotFoundException("ProductCategory not found with id: " + id);
+        throw new ResourceNotFoundException("ProductCategory not found with id: " + id);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class CategoryServiceImpl implements CategoryService {
             return repository.save(existingCategory);
         }
 
-        throw new EntityNotFoundException("ProductCategory not found with id: " + id);
+        throw new ResourceNotFoundException("ProductCategory not found with id: " + id);
     }
 
     @Override
@@ -72,6 +72,6 @@ public class CategoryServiceImpl implements CategoryService {
             return;
         }
 
-        throw new EntityNotFoundException("ProductCategory not found with id: " + id);
+        throw new ResourceNotFoundException("ProductCategory not found with id: " + id);
     }
 }

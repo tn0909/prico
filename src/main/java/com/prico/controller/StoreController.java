@@ -3,7 +3,7 @@ package com.prico.controller;
 import com.prico.dto.ApiResponse;
 import com.prico.dto.StoreRequestDto;
 import com.prico.dto.StoreResponseDto;
-import com.prico.entity.Store;
+import com.prico.model.Store;
 import com.prico.service.StoreService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

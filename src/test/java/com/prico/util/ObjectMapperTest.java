@@ -1,13 +1,15 @@
 package com.prico.util;
 
 import com.prico.dto.*;
-import com.prico.entity.Brand;
-import com.prico.entity.Product;
-import com.prico.entity.Category;
-import com.prico.entity.Store;
+import com.prico.model.Brand;
+import com.prico.model.Product;
+import com.prico.model.Category;
+import com.prico.model.Store;
 import org.junit.jupiter.api.Test;
 
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertNotNull;
+import static junit.framework.TestCase.assertNull;
 
 public class ObjectMapperTest {
 
@@ -38,11 +40,17 @@ public class ObjectMapperTest {
         assertEquals(dto.getDescription(), entity.getDescription());
     }
 
-
     @Test
     public void testToDto_Product() {
         // Given
-        Product entity = new Product(1L, "Product 1", "Product description");
+        Product entity = Product
+                .builder()
+                .id(1L)
+                .name("Product 1")
+                .description("Product description")
+                .category(new Category(2L, "Category 1", "Category description"))
+                .brand(new Brand(3L, "Brand 1", "Brand description"))
+                .build();
 
         // When
         ProductResponseDto dto = ObjectMapper.toDto(entity);
@@ -51,12 +59,80 @@ public class ObjectMapperTest {
         assertEquals(entity.getId(), dto.getId());
         assertEquals(entity.getName(), dto.getName());
         assertEquals(entity.getDescription(), dto.getDescription());
+
+        assertNotNull(entity.getBrand());
+        assertEquals(entity.getBrand().getId(), dto.getBrand().getId());
+        assertEquals(entity.getBrand().getName(), dto.getBrand().getName());
+        assertEquals(entity.getBrand().getDescription(), dto.getBrand().getDescription());
+
+        assertNotNull(entity.getCategory());
+        assertEquals(entity.getCategory().getId(), dto.getCategory().getId());
+        assertEquals(entity.getCategory().getName(), dto.getCategory().getName());
+        assertEquals(entity.getCategory().getDescription(), dto.getCategory().getDescription());
+    }
+
+    @Test
+    public void testToDto_ProductWithoutCategory() {
+        // Given
+        Product entity = Product
+                .builder()
+                .id(1L)
+                .name("Product 1")
+                .description("Product description")
+                .brand(new Brand(3L, "Brand 1", "Brand description"))
+                .build();
+
+        // When
+        ProductResponseDto dto = ObjectMapper.toDto(entity);
+
+        // Then
+        assertEquals(entity.getId(), dto.getId());
+        assertEquals(entity.getName(), dto.getName());
+        assertEquals(entity.getDescription(), dto.getDescription());
+
+        assertNotNull(entity.getBrand());
+        assertEquals(entity.getBrand().getId(), dto.getBrand().getId());
+        assertEquals(entity.getBrand().getName(), dto.getBrand().getName());
+        assertEquals(entity.getBrand().getDescription(), dto.getBrand().getDescription());
+
+        assertNull(entity.getCategory());
+    }
+
+    @Test
+    public void testToDto_ProductWithoutBrand() {
+        // Given
+        Product entity = Product
+                .builder()
+                .id(1L)
+                .name("Product 1")
+                .description("Product description")
+                .category(new Category(2L, "Category 1", "Category description"))
+                .build();
+
+        // When
+        ProductResponseDto dto = ObjectMapper.toDto(entity);
+
+        // Then
+        assertEquals(entity.getId(), dto.getId());
+        assertEquals(entity.getName(), dto.getName());
+        assertEquals(entity.getDescription(), dto.getDescription());
+
+        assertNull(entity.getBrand());
+
+        assertNotNull(entity.getCategory());
+        assertEquals(entity.getCategory().getId(), dto.getCategory().getId());
+        assertEquals(entity.getCategory().getName(), dto.getCategory().getName());
+        assertEquals(entity.getCategory().getDescription(), dto.getCategory().getDescription());
     }
 
     @Test
     public void testToEntity_Product() {
         // Given
-        ProductRequestDto dto = new ProductRequestDto("Product 1", "Product description");
+        ProductRequestDto dto = ProductRequestDto
+                .builder()
+                .name("Product 1")
+                .description("Product description")
+                .build();
 
         // When
         Product entity = ObjectMapper.toEntity(dto);

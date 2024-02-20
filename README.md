@@ -49,7 +49,7 @@ mvn spring-boot:run
 
 ## API Documentation
 
-The API documentation is available at `http://localhost:8080/swagger-ui.html`. Use this interface to explore available endpoints and test API functionality.
+The API documentation is available at `http://localhost:8080/swagger-ui/`. Use this interface to explore available endpoints and test API functionality.
 
 ## Usage
 

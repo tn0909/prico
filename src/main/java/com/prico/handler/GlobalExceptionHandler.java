@@ -19,7 +19,7 @@ import java.util.List;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @Slf4j
 @RestControllerAdvice
-public class ApiExceptionHandler {
+public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -39,7 +39,7 @@ public class ApiExceptionHandler {
         List<ApiError> errors = new ArrayList<>();
 
         ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
+            String fieldName = error instanceof FieldError ? ((FieldError) error).getField() : "";
             String errorMessage = error.getDefaultMessage();
             errors.add(new ApiError(fieldName, errorMessage));
         });

@@ -2,6 +2,7 @@ package com.prico.service.impl;
 
 import com.prico.dto.ProductRequestDto;
 import com.prico.dto.ProductResponseDto;
+import com.prico.dto.SearchRequestDto;
 import com.prico.model.Product;
 import com.prico.exception.ResourceNotFoundException;
 import com.prico.repository.ProductRepository;
@@ -18,6 +19,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -39,7 +41,9 @@ public class ProductServiceImplTest {
         // Given
         Product product1 = new Product(1L, "Product 1", "Product 1 description");
         Product product2 = new Product(2L, "Product 2", "Product 2 description");
-        when(productRepository.findAll()).thenReturn(Arrays.asList(product1, product2));
+        when(productRepository
+                .findAll())
+                .thenReturn(Arrays.asList(product1, product2));
 
         // When
         List<ProductResponseDto> results = productService.getAll();
@@ -164,6 +168,36 @@ public class ProductServiceImplTest {
 
         // When/Then
         assertThrows(ResourceNotFoundException.class, () -> productService.delete(productId));
+    }
+
+    @Test
+    public void testSearch() {
+        // Given
+        Product product1 = new Product(1L, "Product 1", "Product 1 description");
+        Product product2 = new Product(2L, "Product 2", "Product 2 description");
+        when(productRepository
+                .search("product name","category name","brand name"))
+                .thenReturn(Arrays.asList(product1, product2));
+
+        // When
+        SearchRequestDto searchRequestDto = SearchRequestDto
+                .builder()
+                .name("Product Name")
+                .category("Category Name")
+                .brand("Brand Name")
+                .build();
+
+        List<ProductResponseDto> results = productService.search(searchRequestDto);
+
+        // Then
+        assertThat(results).isNotNull();
+        assertEquals(2, results.size());
+        assertThat(results.get(0).getId()).isEqualTo(1L);
+        assertThat(results.get(0).getName()).isEqualTo("Product 1");
+        assertThat(results.get(0).getDescription()).isEqualTo("Product 1 description");
+        assertThat(results.get(1).getId()).isEqualTo(2L);
+        assertThat(results.get(1).getName()).isEqualTo("Product 2");
+        assertThat(results.get(1).getDescription()).isEqualTo("Product 2 description");
     }
 
 }

@@ -45,7 +45,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductResponseDto> search(SearchRequestDto searchRequest) {
         return repository
-                .searchProducts(
+                .search(
                         searchRequest.getName().toLowerCase(),
                         searchRequest.getCategory().toLowerCase(),
                         searchRequest.getBrand().toLowerCase())

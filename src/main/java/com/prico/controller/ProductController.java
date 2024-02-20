@@ -3,6 +3,7 @@ package com.prico.controller;
 import com.prico.dto.ApiResponse;
 import com.prico.dto.ProductRequestDto;
 import com.prico.dto.ProductResponseDto;
+import com.prico.dto.SearchRequestDto;
 import com.prico.model.Product;
 import com.prico.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -63,5 +65,11 @@ public class ProductController {
         response.setMessage("Product has been deleted successfully");
 
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/search")
+    public ResponseEntity<List<ProductResponseDto>> search(@Valid @RequestBody SearchRequestDto search) {
+        List<ProductResponseDto> products = service.search(search);
+        return ResponseEntity.ok(Collections.emptyList());
     }
 }

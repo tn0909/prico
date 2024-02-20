@@ -201,5 +201,56 @@ public class ProductControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.message").value("Invalid product"));
     }
+
+    @Test
+    public void testSearch() throws Exception {
+        ProductResponseDto product1 = ProductResponseDto
+                .builder()
+                .id(1L)
+                .name("Test Product 1")
+                .description("This is the 1st test product")
+                .build();
+
+        ProductResponseDto product2 = ProductResponseDto
+                .builder()
+                .id(2L)
+                .name("Test Product 2")
+                .description("This is the 2nd test product")
+                .build();
+
+        when(productService
+                .search(any()))
+                .thenReturn(Arrays.asList(product1, product2));
+
+        String searchJson = "{\"name\":\"Test\",\"category\":\"Category\",\"brand\": \"Brand\"}";
+
+        mockMvc.perform(post("/products/search")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(searchJson))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.[0].id").value(1))
+                .andExpect(jsonPath("$.[0].name").value("Test Product 1"))
+                .andExpect(jsonPath("$.[0].description").value("This is the 1st test product"))
+                .andExpect(jsonPath("$.[1].id").value(2))
+                .andExpect(jsonPath("$.[1].name").value("Test Product 2"))
+                .andExpect(jsonPath("$.[1].description").value("This is the 2nd test product"));
+    }
+
+    @Test
+    public void testSearch_WithoutSearchCriteria() throws Exception {
+        String searchJson = "{}";
+
+        mockMvc.perform(post("/products/search")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(searchJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value("error"))
+                .andExpect(jsonPath("$.message").value("Validation failed"))
+                .andExpect(jsonPath("$.errors").isArray())
+                .andExpect(jsonPath("$.errors[0].field").value("name"))
+                .andExpect(jsonPath("$.errors[0].message").value("Name should not be NULL or EMPTY"));
+    }
 }
 

@@ -20,7 +20,7 @@ public class ProductStore {
     private String name;
     private String url;
     private String imageUrl;
-    private Long price;
+    private Float price;
 
     @ManyToOne
     @JoinColumn(name = "product_id")

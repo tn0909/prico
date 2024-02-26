@@ -21,7 +21,7 @@ public class ProductStoreResponseDto {
 
     private String imageUrl;
 
-    private Long price;
+    private Float price;
 
     private ProductResponseDto product;
 

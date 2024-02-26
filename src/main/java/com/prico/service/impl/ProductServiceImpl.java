@@ -151,7 +151,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductVariationResponseDto getProductVariation(Long productId) {
+    public ProductVariationResponseDto getVariationsByProduct(Long productId) {
         Product product = repository.findById(productId).orElse(null);
 
         if (product == null) {

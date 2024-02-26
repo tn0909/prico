@@ -258,7 +258,7 @@ public class ObjectMapperTest {
                 .name("Product 1")
                 .url("http://store.com/product1")
                 .imageUrl("http://store.com/product_image")
-                .price(20L)
+                .price(20F)
                 .storeId(2L)
                 .build();
 

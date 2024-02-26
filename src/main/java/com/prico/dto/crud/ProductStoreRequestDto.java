@@ -22,7 +22,7 @@ public class ProductStoreRequestDto {
     private String imageUrl;
 
     @NotBlank(message = "Price should not be NULL or 0")
-    private Long price;
+    private Float price;
 
     @NotBlank(message = "Product should not be NULL")
     private Long productId;

@@ -22,5 +22,5 @@ public interface ProductService {
 
     List<ProductResponseDto> search(SearchRequestDto searchRequest);
 
-    ProductVariationResponseDto getProductVariation(Long productId);
+    ProductVariationResponseDto getVariationsByProduct(Long productId);
 }

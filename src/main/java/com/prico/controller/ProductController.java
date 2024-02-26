@@ -73,9 +73,9 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
-    @PostMapping("/compare/{id}")
-    public ResponseEntity<ProductVariationResponseDto> compare(@PathVariable Long id) {
-        ProductVariationResponseDto response = service.getProductVariation(id);
+    @GetMapping("/{id}/variations")
+    public ResponseEntity<ProductVariationResponseDto> getVariationsByProduct(@PathVariable Long id) {
+        ProductVariationResponseDto response = service.getVariationsByProduct(id);
         return ResponseEntity.ok(response);
     }
 }

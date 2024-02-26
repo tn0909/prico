@@ -55,7 +55,7 @@ The API documentation is available at `http://localhost:8080/swagger-ui/`. Use t
 
 The API supports various endpoints for searching products, retrieving price comparisons, managing products, and more. Refer to the API documentation for full details on available endpoints, request/response formats, and authentication requirements.
 
-# Endpoints for Product Search
+### Endpoints for Product Search
 ```
 # Request
 POST    ​/products/search
@@ -86,7 +86,7 @@ POST    ​/products/search
 ]
 ```
 
-# Endpoints for get variations of a product
+### Endpoints for get variations of a product
 ```
 # Request
 GET    ​/products/{id}/variations

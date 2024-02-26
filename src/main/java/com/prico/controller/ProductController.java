@@ -1,6 +1,7 @@
 package com.prico.controller;
 
 import com.prico.dto.ApiResponse;
+import com.prico.dto.comparison.ProductVariationResponseDto;
 import com.prico.dto.crud.ProductRequestDto;
 import com.prico.dto.crud.ProductResponseDto;
 import com.prico.dto.SearchRequestDto;
@@ -70,5 +71,11 @@ public class ProductController {
     public ResponseEntity<List<ProductResponseDto>> search(@Valid @RequestBody SearchRequestDto search) {
         List<ProductResponseDto> products = service.search(search);
         return ResponseEntity.ok(products);
+    }
+
+    @PostMapping("/compare/{id}")
+    public ResponseEntity<ProductVariationResponseDto> compare(@PathVariable Long id) {
+        ProductVariationResponseDto response = service.getProductVariation(id);
+        return ResponseEntity.ok(response);
     }
 }

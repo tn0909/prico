@@ -120,6 +120,7 @@ public class ObjectMapper {
                         .name(variation.getName())
                         .url(variation.getUrl())
                         .imageUrl(variation.getImageUrl())
+                        .price(variation.getPrice())
                         .build()
                 )
                 .collect(Collectors.toList());

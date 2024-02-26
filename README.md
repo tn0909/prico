@@ -55,7 +55,10 @@ The API documentation is available at `http://localhost:8080/swagger-ui/`. Use t
 
 The API supports various endpoints for searching products, retrieving price comparisons, managing products, and more. Refer to the API documentation for full details on available endpoints, request/response formats, and authentication requirements.
 
-### Endpoints for Product Search
+### Endpoint for Product Search
+
+This API endpoint enables the search for products based on their names, categories, or brands. The endpoint returns products that contain the specified terms. The results are presented with pagination, where each page contains a maximum of 20 products.
+
 ```
 # Request
 POST    ​/products/search
@@ -63,30 +66,38 @@ POST    ​/products/search
   "brand": "Yoplait",
   "category": "Yoghurt",
   "name": "mango"
+  "offset": 0,
+  "limit": 10
 }
 
 # Response
-[
-  {
-    "id": 5,
-    "name": "Yoplait Mango Yoghurt | 1kg",
-    "description": "Yoplait Mango Yoghurt | 1kg",
-    "imageUrl": null,
-    "category": {
-      "id": 2,
-      "name": "Frozen Yoghurt",
-      "description": "Frozen Yoghurt"
-    },
-    "brand": {
-      "id": 1,
-      "name": "Yoplait",
-      "description": "Yoplait"
+{
+  "products": [
+    {
+      "id": 5,
+      "name": "Yoplait Mango Yoghurt | 1kg",
+      "description": "Yoplait Mango Yoghurt | 1kg",
+      "imageUrl": "https://prico.com/images/mango-yoghurt.jpg",
+      "category": {
+        "id": 2,
+        "name": "Frozen Yoghurt",
+        "description": "Frozen Yoghurt"
+      },
+      "brand": {
+        "id": 1,
+        "name": "Yoplait",
+        "description": "Yoplait"
+      }
     }
-  }
-]
+  ],
+  "hasMore": false
+}
 ```
 
 ### Endpoints for get variations of a product
+
+This endpoint enables getting the details of a product sold by different stores.
+
 ```
 # Request
 GET    ​/products/{id}/variations
@@ -95,7 +106,7 @@ GET    ​/products/{id}/variations
 {
   "productId": 5,
   "productName": "Yoplait Mango Yoghurt | 1kg",
-  "productImageUrl": null,
+  "productImageUrl": "https://prico.com/images/mango-yoghurt.jpg",
   "stores": [
     {
       "id": 2,
@@ -107,7 +118,7 @@ GET    ​/products/{id}/variations
           "name": "Yoplait Mango Yoghurt | 1kg",
           "url": "https://www.coles.com.au/product/yoplait-mango-yoghurt-1kg-5892512",
           "imageUrl": "https://shop.coles.com.au/wcsstore/Coles-CAS/images/5/8/9/5892512-zm.jpg",
-          "price": null
+          "price": 4.9
         }
       ]
     },
@@ -121,13 +132,12 @@ GET    ​/products/{id}/variations
           "name": "Yoplait Mango Yoghurt 1kg",
           "url": "https://www.woolworths.com.au/shop/productdetails/253784/yoplait-mango-yoghurt",
           "imageUrl": "https://cdn0.woolworths.media/content/wowproductimages/large/253784.jpg",
-          "price": null
+          "price": 4.5
         }
       ]
     }
   ]
 }
-
 ```
 
 ### Endpoints for CRUD operations on Products

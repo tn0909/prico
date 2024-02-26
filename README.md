@@ -130,7 +130,7 @@ GET    ​/products/{id}/variations
 
 ```
 
-# Endpoints for CRUD operations on Products
+### Endpoints for CRUD operations on Products
 
 1. Get all products
 ```

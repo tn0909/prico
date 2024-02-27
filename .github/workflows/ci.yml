@@ -60,13 +60,18 @@ jobs:
         name: coverage-report
         path: target/site/jacoco
 
-    - name: Add coverage to PR
-      env:
-        GH_TOKEN: ${{ secrets.GH_SECRET }}
+    - name: Extract coverage
+      id: coverage-info
       run: |
         # Generate coverage report and parse results
         line=$(grep 'Total' target/site/jacoco/index.html)
         coverage=$(echo "$line" | cut -d'%' -f 1 | grep -oE '[0-9]+' | tail -n 1)
-        echo $coverage
-        # Post comment in pull request
-        gh pr comment $PR_NUMBER -b "Total test coverage: $coverage%"
+        echo "::set-output name=coverage::$coverage"
+
+    - name: Create check run
+      uses: actions/github-check-action@v2
+      with:
+        name: Coverage Check
+        conclusion: success
+        output: |
+          ${{ steps.coverage-info.outputs.coverage }}

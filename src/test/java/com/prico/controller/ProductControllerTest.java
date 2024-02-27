@@ -1,7 +1,10 @@
 package com.prico.controller;
 
-import com.prico.dto.ProductRequestDto;
-import com.prico.dto.ProductResponseDto;
+import com.prico.dto.comparison.ProductStoreDto;
+import com.prico.dto.comparison.ProductVariationResponseDto;
+import com.prico.dto.comparison.StoreDto;
+import com.prico.dto.crud.ProductRequestDto;
+import com.prico.dto.crud.ProductResponseDto;
 import com.prico.model.Product;
 import com.prico.exception.ResourceNotFoundException;
 import com.prico.service.ProductService;
@@ -251,6 +254,67 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.errors").isArray())
                 .andExpect(jsonPath("$.errors[0].field").value(""))
                 .andExpect(jsonPath("$.errors[0].message").value("At least one property must have data"));
+    }
+
+    @Test
+    public void testGetVariations() throws Exception {
+        Long productId = 1L;
+
+        ProductStoreDto variation = ProductStoreDto
+                .builder()
+                .id(111L)
+                .name("Product 1 variation")
+                .url("store1.com/product1")
+                .imageUrl("store1.com/images/product1.jpg")
+                .price(4.5F)
+                .build();
+
+        StoreDto store = StoreDto
+                .builder()
+                .id(11L)
+                .name("Store 1")
+                .website("store1.com")
+                .variations(Arrays.asList(variation))
+                .build();
+
+        ProductVariationResponseDto response = ProductVariationResponseDto
+                .builder()
+                .productId(1L)
+                .productName("Test Product 1")
+                .productImageUrl("product1.jpg")
+                .stores(Arrays.asList(store))
+                .build();
+
+        when(productService
+                .getVariationsByProduct(productId))
+                .thenReturn(response);
+
+        mockMvc.perform(get("/products/{id}/variations", productId))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.productId").value(1))
+                .andExpect(jsonPath("$.productName").value("Test Product 1"))
+                .andExpect(jsonPath("$.productImageUrl").value("product1.jpg"))
+                .andExpect(jsonPath("$.stores.[0].id").value(11))
+                .andExpect(jsonPath("$.stores.[0].name").value("Store 1"))
+                .andExpect(jsonPath("$.stores.[0].website").value("store1.com"))
+                .andExpect(jsonPath("$.stores.[0].variations[0].name").value("Product 1 variation"))
+                .andExpect(jsonPath("$.stores.[0].variations[0].url").value("store1.com/product1"))
+                .andExpect(jsonPath("$.stores.[0].variations[0].imageUrl").value("store1.com/images/product1.jpg"))
+                .andExpect(jsonPath("$.stores.[0].variations[0].price").value(4.5));
+    }
+
+    @Test
+    public void testGetVariations_WithNonExistentId() throws Exception {
+        long nonExistentId = 100L;
+        when(productService
+                .getVariationsByProduct(eq(nonExistentId)))
+                .thenThrow(new ResourceNotFoundException("Invalid product"));
+
+        mockMvc.perform(get("/products/{id}/variations", nonExistentId))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value("Invalid product"));
     }
 }
 

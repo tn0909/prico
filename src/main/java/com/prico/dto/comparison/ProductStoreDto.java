@@ -1,20 +1,23 @@
-package com.prico.dto;
+package com.prico.dto.comparison;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BrandRequestDto {
+public class ProductStoreDto {
 
-    @NotBlank(message = "Name should not be NULL or EMPTY")
+    private Long id;
+
     private String name;
 
-    private String description;
+    private String url;
+
+    private String imageUrl;
+
+    private Float price;
 }

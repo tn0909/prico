@@ -1,20 +1,16 @@
-package com.prico.model;
+package com.prico.dto.crud;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-
-@Entity
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class Category {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class BrandResponseDto {
+
     private Long id;
 
     private String name;

@@ -1,4 +1,4 @@
-package com.prico.dto;
+package com.prico.dto.crud;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BrandResponseDto {
+public class StoreResponseDto {
+
     private Long id;
+
     private String name;
-    private String description;
+
+    private String location;
+
+    private String website;
 }

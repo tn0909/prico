@@ -1,10 +1,8 @@
 package com.prico.util;
 
-import com.prico.dto.*;
-import com.prico.model.Brand;
-import com.prico.model.Product;
-import com.prico.model.Category;
-import com.prico.model.Store;
+import com.prico.dto.crud.ProductStoreResponseDto;
+import com.prico.dto.crud.*;
+import com.prico.model.*;
 import org.junit.jupiter.api.Test;
 
 import static junit.framework.TestCase.assertEquals;
@@ -48,6 +46,7 @@ public class ObjectMapperTest {
                 .id(1L)
                 .name("Product 1")
                 .description("Product description")
+                .imageUrl("httm://image.jpg")
                 .category(new Category(2L, "Category 1", "Category description"))
                 .brand(new Brand(3L, "Brand 1", "Brand description"))
                 .build();
@@ -59,6 +58,7 @@ public class ObjectMapperTest {
         assertEquals(entity.getId(), dto.getId());
         assertEquals(entity.getName(), dto.getName());
         assertEquals(entity.getDescription(), dto.getDescription());
+        assertEquals(entity.getImageUrl(), dto.getImageUrl());
 
         assertNotNull(entity.getBrand());
         assertEquals(entity.getBrand().getId(), dto.getBrand().getId());
@@ -132,6 +132,8 @@ public class ObjectMapperTest {
                 .builder()
                 .name("Product 1")
                 .description("Product description")
+                .categoryId(1L)
+                .brandId(2L)
                 .build();
 
         // When
@@ -143,7 +145,7 @@ public class ObjectMapperTest {
     }
 
     @Test
-    public void testToDto_ProductCategory() {
+    public void testToDto_Category() {
         // Given
         Category entity = new Category(1L, "Product category 1", "Product category description");
 
@@ -157,7 +159,7 @@ public class ObjectMapperTest {
     }
 
     @Test
-    public void testToEntity_ProductCategory() {
+    public void testToEntity_Category() {
         // Given
         CategoryRequestDto dto = new CategoryRequestDto("Product category 1", "Product category description");
 
@@ -197,4 +199,77 @@ public class ObjectMapperTest {
         assertEquals(dto.getLocation(), entity.getLocation());
         assertEquals(dto.getWebsite(), entity.getWebsite());
     }
+
+    @Test
+    public void testToDto_ProductStore() {
+        // Given
+        Product product = Product
+                .builder()
+                .id(1L)
+                .imageUrl("http://image.jpg")
+                .name("Product 1")
+                .description("Product description")
+                .build();
+
+        Store store = Store
+                .builder()
+                .id(3L)
+                .name("Store 1")
+                .location("Store location")
+                .website("store.com")
+                .build();
+
+        ProductStore entity = ProductStore
+                .builder()
+                .id(1L)
+                .name("Store Product 1")
+                .url("http://store.com/product1")
+                .imageUrl("http://store.com/product_image")
+                .product(product)
+                .store(store)
+                .build();
+
+        // When
+        ProductStoreResponseDto dto = ObjectMapper.toDto(entity);
+
+        // Then
+        assertEquals(entity.getId(), dto.getId());
+        assertEquals(entity.getName(), dto.getName());
+        assertEquals(entity.getUrl(), dto.getUrl());
+        assertEquals(entity.getImageUrl(), dto.getImageUrl());
+        assertEquals(entity.getPrice(), dto.getPrice());
+
+        assertNotNull(entity.getProduct());
+        assertEquals(entity.getProduct().getId(), dto.getProduct().getId());
+        assertEquals(entity.getProduct().getName(), dto.getProduct().getName());
+        assertEquals(entity.getProduct().getImageUrl(), dto.getProduct().getImageUrl());
+
+        assertNotNull(entity.getStore());
+        assertEquals(entity.getStore().getId(), dto.getStore().getId());
+        assertEquals(entity.getStore().getName(), dto.getStore().getName());
+        assertEquals(entity.getStore().getLocation(), dto.getStore().getLocation());
+    }
+
+    @Test
+    public void testToEntity_ProductStore() {
+        // Given
+        ProductStoreRequestDto dto = ProductStoreRequestDto
+                .builder()
+                .name("Product 1")
+                .url("http://store.com/product1")
+                .imageUrl("http://store.com/product_image")
+                .price(20F)
+                .storeId(2L)
+                .build();
+
+        // When
+        ProductStore entity = ObjectMapper.toEntity(dto);
+
+        // Then
+        assertEquals(dto.getName(), entity.getName());
+        assertEquals(dto.getUrl(), entity.getUrl());
+        assertEquals(dto.getImageUrl(), entity.getImageUrl());
+        assertEquals(dto.getPrice(), entity.getPrice());
+    }
+
 }

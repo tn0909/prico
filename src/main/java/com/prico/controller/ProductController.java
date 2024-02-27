@@ -1,8 +1,9 @@
 package com.prico.controller;
 
 import com.prico.dto.ApiResponse;
-import com.prico.dto.ProductRequestDto;
-import com.prico.dto.ProductResponseDto;
+import com.prico.dto.comparison.ProductVariationResponseDto;
+import com.prico.dto.crud.ProductRequestDto;
+import com.prico.dto.crud.ProductResponseDto;
 import com.prico.dto.SearchRequestDto;
 import com.prico.model.Product;
 import com.prico.service.ProductService;
@@ -13,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -71,5 +71,11 @@ public class ProductController {
     public ResponseEntity<List<ProductResponseDto>> search(@Valid @RequestBody SearchRequestDto search) {
         List<ProductResponseDto> products = service.search(search);
         return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/{id}/variations")
+    public ResponseEntity<ProductVariationResponseDto> getVariationsByProduct(@PathVariable Long id) {
+        ProductVariationResponseDto response = service.getVariationsByProduct(id);
+        return ResponseEntity.ok(response);
     }
 }

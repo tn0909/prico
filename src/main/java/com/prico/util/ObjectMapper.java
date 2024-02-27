@@ -1,10 +1,15 @@
 package com.prico.util;
 
-import com.prico.dto.*;
-import com.prico.model.Brand;
-import com.prico.model.Product;
-import com.prico.model.Category;
-import com.prico.model.Store;
+import com.prico.dto.comparison.ProductStoreDto;
+import com.prico.dto.comparison.StoreDto;
+import com.prico.dto.crud.ProductStoreResponseDto;
+import com.prico.dto.crud.*;
+import com.prico.model.*;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 public class ObjectMapper {
 
@@ -28,6 +33,7 @@ public class ObjectMapper {
         dto.setId(product.getId());
         dto.setName(product.getName());
         dto.setDescription(product.getDescription());
+        dto.setImageUrl(product.getImageUrl());
 
         if (product.getBrand() != null) {
             dto.setBrand(toDto(product.getBrand()));
@@ -77,5 +83,54 @@ public class ObjectMapper {
         entity.setLocation(dto.getLocation());
         entity.setWebsite(dto.getWebsite());
         return entity;
+    }
+
+
+    public static ProductStoreResponseDto toDto(ProductStore entity) {
+        return ProductStoreResponseDto
+                .builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .url(entity.getUrl())
+                .imageUrl(entity.getImageUrl())
+                .price(entity.getPrice())
+                .store(toDto(entity.getStore()))
+                .product(toDto(entity.getProduct()))
+                .build();
+    }
+
+    public static ProductStore toEntity(ProductStoreRequestDto dto) {
+        return ProductStore
+                .builder()
+                .name(dto.getName())
+                .url(dto.getUrl())
+                .imageUrl(dto.getImageUrl())
+                .price(dto.getPrice())
+                .build();
+    }
+
+    public static StoreDto toDto(Map.Entry<Store, List<ProductStore>> storeProductStoreEntry) {
+        Store store = storeProductStoreEntry.getKey();
+        List<ProductStore> variations = storeProductStoreEntry.getValue();
+
+        List<ProductStoreDto> variationDtos = variations.stream()
+                .map(variation -> ProductStoreDto
+                        .builder()
+                        .id(variation.getId())
+                        .name(variation.getName())
+                        .url(variation.getUrl())
+                        .imageUrl(variation.getImageUrl())
+                        .price(variation.getPrice())
+                        .build()
+                )
+                .collect(Collectors.toList());
+
+        return StoreDto
+                .builder()
+                .id(store.getId())
+                .name(store.getName())
+                .website(store.getWebsite())
+                .variations(variationDtos)
+                .build();
     }
 }

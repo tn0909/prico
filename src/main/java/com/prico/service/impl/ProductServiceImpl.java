@@ -1,15 +1,16 @@
 package com.prico.service.impl;
 
-import com.prico.dto.ProductRequestDto;
-import com.prico.dto.ProductResponseDto;
+import com.prico.dto.comparison.ProductVariationResponseDto;
+import com.prico.dto.comparison.StoreDto;
+import com.prico.dto.crud.ProductRequestDto;
+import com.prico.dto.crud.ProductResponseDto;
 import com.prico.dto.SearchRequestDto;
-import com.prico.model.Brand;
-import com.prico.model.Category;
+import com.prico.model.*;
 import com.prico.exception.ResourceNotFoundException;
-import com.prico.model.Product;
 import com.prico.repository.BrandRepository;
 import com.prico.repository.CategoryRepository;
 import com.prico.repository.ProductRepository;
+import com.prico.repository.ProductStoreRepository;
 import com.prico.service.ProductService;
 import com.prico.util.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private ProductStoreRepository productStoreRepository;
 
     @Override
     public List<ProductResponseDto> getAll() {
@@ -144,5 +148,39 @@ public class ProductServiceImpl implements ProductService {
         }
 
         throw new ResourceNotFoundException("Product not found with id: " + id);
+    }
+
+    @Override
+    public ProductVariationResponseDto getVariationsByProduct(Long productId) {
+        Product product = repository.findById(productId).orElse(null);
+
+        if (product == null) {
+            throw new ResourceNotFoundException("Product not found with id: " + productId);
+        }
+
+        ProductVariationResponseDto response = ProductVariationResponseDto
+                .builder()
+                 .productId(product.getId())
+                .productName(product.getName())
+                .productImageUrl(product.getImageUrl())
+                .build();
+
+        List<ProductStore> productStores = productStoreRepository.findAllByProduct(product);
+
+        if (productStores.isEmpty()) {
+            return response;
+        }
+
+        List<StoreDto> stores = productStores
+                .stream()
+                .collect(Collectors.groupingBy(ProductStore::getStore))
+                .entrySet()
+                .stream()
+                .map(x -> ObjectMapper.toDto(x))
+                .collect(Collectors.toList());
+
+        response.setStores(stores);
+
+        return response;
     }
 }

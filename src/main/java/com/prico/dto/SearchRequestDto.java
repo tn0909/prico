@@ -11,6 +11,8 @@ import lombok.*;
 public class SearchRequestDto {
 
     private String name;
+
     private String brand;
+
     private String category;
 }

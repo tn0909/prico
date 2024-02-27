@@ -68,8 +68,17 @@ jobs:
         # Generate coverage report and parse results
         line=$(grep 'Total' target/site/jacoco/index.html)
         coverage=$(echo "$line" | cut -d'%' -f 1 | grep -oE '[0-9]+' | tail -n 1)
-        message=$(echo -e "### Test Coverage Report\nTotal coverage: $coverage%\n*You can find full report [here](https://github.com/tn0909/prico/actions/runs/$RUN_ID?pr=$PR_NUMBER)*")
+        message=$(echo -e "### Test Coverage Report\nTotal coverage: $coverage%\n\n*You can download the full report at the [Artifacts section](https://github.com/tn0909/prico/actions/runs/$RUN_ID?pr=$PR_NUMBER)*")
         # Post comment in pull request
         gh pr comment $PR_NUMBER --body "$message"
+
+
+    - name: Extract modified files
+      id: extract-modified-files
+      run: |
+        # Get the list of modified or added files in the pull request
+        git diff --name-only ${{ github.base_ref }} ${{ github.head_ref }} >> modified_files.txt
+        modified_files=$(<modified_files.txt)
+        echo $modified_files
 
 

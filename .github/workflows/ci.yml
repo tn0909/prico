@@ -68,7 +68,7 @@ jobs:
         line=$(grep 'Total' target/site/jacoco/index.html)
         coverage=$(echo "$line" | cut -d'%' -f 1 | grep -oE '[0-9]+' | tail -n 1)
         # Post comment in pull request
-        message=$(echo -e ""### Coverage Report\nYou can find the full HTML report [here](#). Summary is below:\n$coverage%)
+        message=$(echo -e "### Coverage Report\nYou can find the full HTML report [here](#). Summary is below:\n$coverage%")
         gh pr comment $PR_NUMBER --body "$message"
 
 

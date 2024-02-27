@@ -73,12 +73,3 @@ jobs:
         gh pr comment $PR_NUMBER --body "$message"
 
 
-    - name: Extract modified files
-      id: extract-modified-files
-      run: |
-        # Get the list of modified or added files in the pull request
-        git diff --name-only ${{ github.base_ref }} ${{ github.head_ref }} >> modified_files.txt
-        modified_files=$(<modified_files.txt)
-        echo $modified_files
-
-

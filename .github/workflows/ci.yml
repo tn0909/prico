@@ -47,9 +47,10 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-
 
-    - name: Get PR number
-      id: pr_number
-      run: echo "PR_NUMBER=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
+    - name: Get variables
+      run: |
+        echo "PR_NUMBER=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
+        echo "RUN_ID=${{ github.run_id }}" >> $GITHUB_ENV
 
     - name: Run tests with coverage
       run: mvn -B clean test
@@ -67,8 +68,8 @@ jobs:
         # Generate coverage report and parse results
         line=$(grep 'Total' target/site/jacoco/index.html)
         coverage=$(echo "$line" | cut -d'%' -f 1 | grep -oE '[0-9]+' | tail -n 1)
+        message=$(echo -e "### Test Coverage Report\nTotal coverage: $coverage%\n*You can find full report [here](https://github.com/tn0909/prico/actions/runs/$RUN_ID?pr=$PR_NUMBER)*")
         # Post comment in pull request
-        message=$(echo -e "### Coverage Report\nYou can find the full HTML report [here](#). Summary is below:\n$coverage%")
         gh pr comment $PR_NUMBER --body "$message"
 
 

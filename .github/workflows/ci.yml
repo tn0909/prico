@@ -64,6 +64,7 @@ jobs:
       run: |
         # Generate coverage report and parse results
         line=$(grep 'Total' target/site/jacoco/index.html)
-        coverage=$(echo "$line" | cut -d'%' -f 1)
+        coverage=$(echo "$line" | cut -d'%' -f 1 | grep -oE '[0-9]+' | tail -n 1)
+        echo $coverage
         # Post comment in pull request
-        gh pr comment $PR_NUMBER "Total test coverage: $coverage%"
+        gh pr comment $PR_NUMBER -b "Total test coverage: $coverage%"

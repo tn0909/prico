@@ -69,6 +69,9 @@ jobs:
         coverage=$(echo "$line" | cut -d'%' -f 1 | grep -oE '[0-9]+' | tail -n 1)
         echo $coverage
         # Post comment in pull request
-        gh pr comment $PR_NUMBER -b "### Coverage Report\nYou can find the full HTML report [here](#). Summary is below: $coverage%"
+        echo ""### Coverage Report
+        You can find the full HTML report [here](#). Summary is below:
+        $coverage%
+        "" | gh pr comment $PR_NUMBER --body -
 
 

@@ -61,6 +61,8 @@ jobs:
         path: target/site/jacoco
 
     - name: Add coverage to PR
+      env:
+        GH_TOKEN: ${{ secrets.GH_SECRET }}
       run: |
         # Generate coverage report and parse results
         line=$(grep 'Total' target/site/jacoco/index.html)

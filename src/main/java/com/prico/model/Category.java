@@ -1,4 +1,4 @@
-package com.prico.entity;
+package com.prico.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,5 +18,6 @@ public class Category {
     private Long id;
 
     private String name;
+
     private String description;
 }

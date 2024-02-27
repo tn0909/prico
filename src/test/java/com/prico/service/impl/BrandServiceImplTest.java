@@ -1,11 +1,10 @@
 package com.prico.service.impl;
 
-import com.prico.dto.BrandRequestDto;
-import com.prico.dto.BrandResponseDto;
-import com.prico.entity.Brand;
-import com.prico.exception.EntityNotFoundException;
+import com.prico.dto.crud.BrandRequestDto;
+import com.prico.dto.crud.BrandResponseDto;
+import com.prico.model.Brand;
+import com.prico.exception.ResourceNotFoundException;
 import com.prico.repository.BrandRepository;
-import com.prico.service.impl.BrandServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -81,7 +80,7 @@ public class BrandServiceImplTest {
         when(brandRepository.findById(brandId)).thenReturn(Optional.empty());
 
         // When/Then
-        assertThrows(EntityNotFoundException.class, () -> brandService.getById(brandId));
+        assertThrows(ResourceNotFoundException.class, () -> brandService.getById(brandId));
     }
 
     @Test
@@ -130,7 +129,7 @@ public class BrandServiceImplTest {
         when(brandRepository.findById(brandId)).thenReturn(Optional.empty());
 
         // When/Then
-        assertThrows(EntityNotFoundException.class, () -> brandService.update(brandId, updatedBrand));
+        assertThrows(ResourceNotFoundException.class, () -> brandService.update(brandId, updatedBrand));
     }
 
     @Test
@@ -153,7 +152,7 @@ public class BrandServiceImplTest {
         when(brandRepository.existsById(brandId)).thenReturn(false);
 
         // When/Then
-        assertThrows(EntityNotFoundException.class, () -> brandService.delete(brandId));
+        assertThrows(ResourceNotFoundException.class, () -> brandService.delete(brandId));
     }
 
 }

@@ -1,9 +1,9 @@
 package com.prico.controller;
 
-import com.prico.dto.CategoryRequestDto;
-import com.prico.dto.CategoryResponseDto;
-import com.prico.entity.Category;
-import com.prico.exception.EntityNotFoundException;
+import com.prico.dto.crud.CategoryRequestDto;
+import com.prico.dto.crud.CategoryResponseDto;
+import com.prico.model.Category;
+import com.prico.exception.ResourceNotFoundException;
 import com.prico.service.CategoryService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,7 +85,7 @@ public class CategoryControllerTest {
         long nonExistentId = 100L;
         when(service
                 .getById(eq(nonExistentId)))
-                .thenThrow(new EntityNotFoundException("Invalid category"));
+                .thenThrow(new ResourceNotFoundException("Invalid category"));
 
         mockMvc.perform(get("/categories/{id}", nonExistentId))
                 .andExpect(status().isNotFound())
@@ -149,7 +149,7 @@ public class CategoryControllerTest {
         long nonExistentId = 100L;
         when(service
                 .update(eq(nonExistentId), any()))
-                .thenThrow(new EntityNotFoundException("Invalid category"));
+                .thenThrow(new ResourceNotFoundException("Invalid category"));
 
         mockMvc.perform(put("/categories/{id}", nonExistentId)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -191,7 +191,7 @@ public class CategoryControllerTest {
     @Test
     public void testDelete_WithNonExistentId() throws Exception {
         long nonExistentId = 100L;
-        doThrow(new EntityNotFoundException("Invalid category"))
+        doThrow(new ResourceNotFoundException("Invalid category"))
                 .when(service)
                 .delete(nonExistentId);
 

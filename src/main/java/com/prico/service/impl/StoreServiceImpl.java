@@ -1,9 +1,9 @@
 package com.prico.service.impl;
 
-import com.prico.dto.StoreRequestDto;
-import com.prico.dto.StoreResponseDto;
-import com.prico.entity.Store;
-import com.prico.exception.EntityNotFoundException;
+import com.prico.dto.crud.StoreRequestDto;
+import com.prico.dto.crud.StoreResponseDto;
+import com.prico.model.Store;
+import com.prico.exception.ResourceNotFoundException;
 import com.prico.repository.StoreRepository;
 import com.prico.service.StoreService;
 import com.prico.util.ObjectMapper;
@@ -39,7 +39,7 @@ public class StoreServiceImpl implements StoreService {
             return ObjectMapper.toDto(optionalStore.get());
         }
 
-        throw new EntityNotFoundException("Store not found with id: " + id);
+        throw new ResourceNotFoundException("Store not found with id: " + id);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class StoreServiceImpl implements StoreService {
             return repository.save(existingStore);
         }
 
-        throw new EntityNotFoundException("Store not found with id: " + id);
+        throw new ResourceNotFoundException("Store not found with id: " + id);
     }
 
     @Override
@@ -74,6 +74,6 @@ public class StoreServiceImpl implements StoreService {
             return;
         }
 
-        throw new EntityNotFoundException("Store not found with id: " + id);
+        throw new ResourceNotFoundException("Store not found with id: " + id);
     }
 }

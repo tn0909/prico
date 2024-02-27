@@ -1,9 +1,9 @@
 package com.prico.controller;
 
-import com.prico.dto.StoreRequestDto;
-import com.prico.dto.StoreResponseDto;
-import com.prico.entity.Store;
-import com.prico.exception.EntityNotFoundException;
+import com.prico.dto.crud.StoreRequestDto;
+import com.prico.dto.crud.StoreResponseDto;
+import com.prico.model.Store;
+import com.prico.exception.ResourceNotFoundException;
 import com.prico.service.StoreService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,7 +93,7 @@ public class StoreControllerTest {
         long nonExistentId = 100L;
         when(storeService
                 .getById(eq(nonExistentId)))
-                .thenThrow(new EntityNotFoundException("Invalid store"));
+                .thenThrow(new ResourceNotFoundException("Invalid store"));
 
         mockMvc.perform(get("/stores/{id}", nonExistentId))
                 .andExpect(status().isNotFound())
@@ -158,7 +158,7 @@ public class StoreControllerTest {
         long nonExistentId = 100L;
         when(storeService
                 .update(eq(nonExistentId), any()))
-                .thenThrow(new EntityNotFoundException("Invalid store"));
+                .thenThrow(new ResourceNotFoundException("Invalid store"));
 
         mockMvc.perform(put("/stores/{id}", nonExistentId)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -200,7 +200,7 @@ public class StoreControllerTest {
     @Test
     public void testDelete_WithNonExistentId() throws Exception {
         long nonExistentId = 100L;
-        doThrow(new EntityNotFoundException("Invalid store"))
+        doThrow(new ResourceNotFoundException("Invalid store"))
                 .when(storeService)
                 .delete(nonExistentId);
 

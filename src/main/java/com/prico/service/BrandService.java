@@ -1,11 +1,8 @@
 package com.prico.service;
 
-import com.prico.dto.BrandRequestDto;
-import com.prico.dto.BrandResponseDto;
-import com.prico.dto.ProductRequestDto;
-import com.prico.dto.ProductResponseDto;
-import com.prico.entity.Brand;
-import com.prico.entity.Product;
+import com.prico.dto.crud.BrandRequestDto;
+import com.prico.dto.crud.BrandResponseDto;
+import com.prico.model.Brand;
 
 import java.util.List;
 

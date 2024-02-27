@@ -1,8 +1,10 @@
 package com.prico.service;
 
-import com.prico.dto.ProductRequestDto;
-import com.prico.dto.ProductResponseDto;
-import com.prico.entity.Product;
+import com.prico.dto.crud.ProductRequestDto;
+import com.prico.dto.crud.ProductResponseDto;
+import com.prico.dto.comparison.ProductVariationResponseDto;
+import com.prico.dto.SearchRequestDto;
+import com.prico.model.Product;
 
 import java.util.List;
 
@@ -17,4 +19,8 @@ public interface ProductService {
     Product update(Long id, ProductRequestDto product);
 
     void delete(Long id);
+
+    List<ProductResponseDto> search(SearchRequestDto searchRequest);
+
+    ProductVariationResponseDto getVariationsByProduct(Long productId);
 }

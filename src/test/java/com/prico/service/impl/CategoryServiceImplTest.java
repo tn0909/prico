@@ -1,9 +1,9 @@
 package com.prico.service.impl;
 
-import com.prico.dto.CategoryRequestDto;
-import com.prico.dto.CategoryResponseDto;
-import com.prico.entity.Category;
-import com.prico.exception.EntityNotFoundException;
+import com.prico.dto.crud.CategoryRequestDto;
+import com.prico.dto.crud.CategoryResponseDto;
+import com.prico.model.Category;
+import com.prico.exception.ResourceNotFoundException;
 import com.prico.repository.CategoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -80,7 +80,7 @@ public class CategoryServiceImplTest {
         when(categoryRepository.findById(productCategoryId)).thenReturn(Optional.empty());
 
         // When/Then
-        assertThrows(EntityNotFoundException.class, () -> productCategoryService.getById(productCategoryId));
+        assertThrows(ResourceNotFoundException.class, () -> productCategoryService.getById(productCategoryId));
     }
 
     @Test
@@ -129,7 +129,7 @@ public class CategoryServiceImplTest {
         when(categoryRepository.findById(productCategoryId)).thenReturn(Optional.empty());
 
         // When/Then
-        assertThrows(EntityNotFoundException.class, () -> productCategoryService.update(productCategoryId, updatedProductCategory));
+        assertThrows(ResourceNotFoundException.class, () -> productCategoryService.update(productCategoryId, updatedProductCategory));
     }
 
     @Test
@@ -152,7 +152,7 @@ public class CategoryServiceImplTest {
         when(categoryRepository.existsById(productCategoryId)).thenReturn(false);
 
         // When/Then
-        assertThrows(EntityNotFoundException.class, () -> productCategoryService.delete(productCategoryId));
+        assertThrows(ResourceNotFoundException.class, () -> productCategoryService.delete(productCategoryId));
     }
 
 }

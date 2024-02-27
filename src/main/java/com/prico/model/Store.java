@@ -1,4 +1,4 @@
-package com.prico.entity;
+package com.prico.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,16 +19,8 @@ public class Store {
     private Long id;
 
     private String name;
+
     private String location;
+
     private String website;
-
-    @OneToMany(mappedBy = "store")
-    private List<Price> prices;
-
-    public Store(Long id, String name, String location, String website) {
-        this.id = id;
-        this.name = name;
-        this.location = location;
-        this.website = website;
-    }
 }

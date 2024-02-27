@@ -1,9 +1,9 @@
 package com.prico.service.impl;
 
-import com.prico.dto.StoreRequestDto;
-import com.prico.dto.StoreResponseDto;
-import com.prico.entity.Store;
-import com.prico.exception.EntityNotFoundException;
+import com.prico.dto.crud.StoreRequestDto;
+import com.prico.dto.crud.StoreResponseDto;
+import com.prico.model.Store;
+import com.prico.exception.ResourceNotFoundException;
 import com.prico.repository.StoreRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -85,7 +85,7 @@ public class StoreServiceImplTest {
         when(storeRepository.findById(storeId)).thenReturn(Optional.empty());
 
         // When/Then
-        assertThrows(EntityNotFoundException.class, () -> storeService.getById(storeId));
+        assertThrows(ResourceNotFoundException.class, () -> storeService.getById(storeId));
     }
 
     @Test
@@ -136,7 +136,7 @@ public class StoreServiceImplTest {
         when(storeRepository.findById(storeId)).thenReturn(Optional.empty());
 
         // When/Then
-        assertThrows(EntityNotFoundException.class, () -> storeService.update(storeId, updatedStore));
+        assertThrows(ResourceNotFoundException.class, () -> storeService.update(storeId, updatedStore));
     }
 
     @Test
@@ -159,7 +159,7 @@ public class StoreServiceImplTest {
         when(storeRepository.existsById(storeId)).thenReturn(false);
 
         // When/Then
-        assertThrows(EntityNotFoundException.class, () -> storeService.delete(storeId));
+        assertThrows(ResourceNotFoundException.class, () -> storeService.delete(storeId));
     }
 
 }

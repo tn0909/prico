@@ -1,4 +1,4 @@
-package com.prico.dto;
+package com.prico.dto.crud;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,5 +17,6 @@ public class StoreRequestDto {
     private String name;
 
     private String location;
+
     private String website;
 }

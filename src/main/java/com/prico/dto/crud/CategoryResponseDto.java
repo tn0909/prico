@@ -1,4 +1,4 @@
-package com.prico.dto;
+package com.prico.dto.crud;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,7 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class CategoryResponseDto {
+
     private Long id;
+
     private String name;
+
     private String description;
 }

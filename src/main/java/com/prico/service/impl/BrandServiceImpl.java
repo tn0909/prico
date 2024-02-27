@@ -1,9 +1,9 @@
 package com.prico.service.impl;
 
-import com.prico.dto.BrandRequestDto;
-import com.prico.dto.BrandResponseDto;
-import com.prico.entity.Brand;
-import com.prico.exception.EntityNotFoundException;
+import com.prico.dto.crud.BrandRequestDto;
+import com.prico.dto.crud.BrandResponseDto;
+import com.prico.model.Brand;
+import com.prico.exception.ResourceNotFoundException;
 import com.prico.repository.BrandRepository;
 import com.prico.service.BrandService;
 import com.prico.util.ObjectMapper;
@@ -39,7 +39,7 @@ public class BrandServiceImpl implements BrandService {
             return ObjectMapper.toDto(optionalBrand.get());
         }
 
-        throw new EntityNotFoundException("Brand not found with id: " + id);
+        throw new ResourceNotFoundException("Brand not found with id: " + id);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class BrandServiceImpl implements BrandService {
             return repository.save(existingBrand);
         }
 
-        throw new EntityNotFoundException("Brand not found with id: " + id);
+        throw new ResourceNotFoundException("Brand not found with id: " + id);
     }
 
     @Override
@@ -72,6 +72,6 @@ public class BrandServiceImpl implements BrandService {
             return;
         }
 
-        throw new EntityNotFoundException("Brand not found with id: " + id);
+        throw new ResourceNotFoundException("Brand not found with id: " + id);
     }
 }

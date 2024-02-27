@@ -1,9 +1,9 @@
 package com.prico.controller;
 
 import com.prico.dto.ApiResponse;
-import com.prico.dto.BrandRequestDto;
-import com.prico.dto.BrandResponseDto;
-import com.prico.entity.Brand;
+import com.prico.dto.crud.BrandRequestDto;
+import com.prico.dto.crud.BrandResponseDto;
+import com.prico.model.Brand;
 import com.prico.service.BrandService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

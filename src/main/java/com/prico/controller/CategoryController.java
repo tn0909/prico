@@ -1,9 +1,9 @@
 package com.prico.controller;
 
 import com.prico.dto.ApiResponse;
-import com.prico.dto.CategoryRequestDto;
-import com.prico.dto.CategoryResponseDto;
-import com.prico.entity.Category;
+import com.prico.dto.crud.CategoryRequestDto;
+import com.prico.dto.crud.CategoryResponseDto;
+import com.prico.model.Category;
 import com.prico.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -9,6 +9,12 @@ spring:
     hibernate:
       ddl-auto: update
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://${auth0.domain}/
+
   # Fix error happens when starting application after adding swagger plugin
   mvc:
     pathmatch:
@@ -17,3 +23,7 @@ spring:
 springfox:
   documentation:
     swagger-ui.enabled: true
+
+auth0:
+  audience: https://prico.com
+  domain: dev-ywc7xshec6w6nkoy.us.auth0.com

@@ -255,7 +255,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void testSearch_ReturnsResult() throws Exception {
+    public void testSearch_WithSearchCriteria_ReturnsResult() throws Exception {
         ProductResponseDto product1 = ProductResponseDto
                 .builder()
                 .id(1L)

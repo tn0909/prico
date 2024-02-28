@@ -6,12 +6,9 @@ import com.prico.dto.comparison.StoreDto;
 import com.prico.dto.crud.ProductRequestDto;
 import com.prico.dto.crud.ProductResponseDto;
 import com.prico.dto.SearchRequestDto;
-import com.prico.model.Product;
+import com.prico.model.*;
 import com.prico.exception.ResourceNotFoundException;
-import com.prico.model.ProductStore;
-import com.prico.model.Store;
-import com.prico.repository.ProductRepository;
-import com.prico.repository.ProductStoreRepository;
+import com.prico.repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -19,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +31,12 @@ public class ProductServiceImplTest {
 
     @Mock
     private ProductRepository productRepository;
+
+    @Mock
+    private BrandRepository brandRepository;
+
+    @Mock
+    private CategoryRepository categoryRepository;
 
     @Mock
     private ProductStoreRepository productStoreRepository;
@@ -96,12 +100,43 @@ public class ProductServiceImplTest {
     }
 
     @Test
-    public void testCreate() {
+    public void testCreate_WithBrandAndCategory_CreatesProduct() {
         // Given
         ProductRequestDto newProduct = ProductRequestDto
                 .builder()
                 .name("New Product")
                 .description("Product description")
+                .imageUrl("image.jpg")
+                .brandId(11L)
+                .categoryId(111L)
+                .build();
+        Product savedProduct = new Product(1L, "New Product", "Product description");
+        when(productRepository.save(any())).thenReturn(savedProduct);
+
+        Brand brand = new Brand(11L, "Brand 1", "Description");
+        when(brandRepository.findById(11L)).thenReturn(Optional.of(brand));
+
+        Category category = new Category(111L, "Category 1", "Description");
+        when(categoryRepository.findById(111L)).thenReturn(Optional.of(category));
+
+        // When
+        Product result = productService.create(newProduct);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(1L);
+        assertThat(result.getName()).isEqualTo("New Product");
+        assertThat(result.getDescription()).isEqualTo("Product description");
+    }
+
+    @Test
+    public void testCreate_WithoutBrandAndCategory_CreatesProduct() {
+        // Given
+        ProductRequestDto newProduct = ProductRequestDto
+                .builder()
+                .name("New Product")
+                .description("Product description")
+                .imageUrl("image.jpg")
                 .build();
         Product savedProduct = new Product(1L, "New Product", "Product description");
         when(productRepository.save(any())).thenReturn(savedProduct);
@@ -117,7 +152,86 @@ public class ProductServiceImplTest {
     }
 
     @Test
-    public void testUpdate() {
+    public void testCreate_WithNonExisingBrand_ThowsNotFoundException() {
+        // Given
+        ProductRequestDto newProduct = ProductRequestDto
+                .builder()
+                .name("New Product")
+                .description("Product description")
+                .imageUrl("image.jpg")
+                .brandId(11L)
+                .categoryId(111L)
+                .build();
+        Product savedProduct = new Product(1L, "New Product", "Product description");
+        when(productRepository.save(any())).thenReturn(savedProduct);
+        when(brandRepository.findById(11L)).thenReturn(Optional.empty());
+
+        Category category = new Category(111L, "Category 1", "Description");
+        when(categoryRepository.findById(111L)).thenReturn(Optional.of(category));
+
+        // When / Then
+        assertThrows(ResourceNotFoundException.class, () -> productService.create(newProduct));
+    }
+
+    @Test
+    public void testCreate_WithNonExisingCategory_ThowsNotFoundException() {
+        // Given
+        ProductRequestDto newProduct = ProductRequestDto
+                .builder()
+                .name("New Product")
+                .description("Product description")
+                .imageUrl("image.jpg")
+                .brandId(11L)
+                .categoryId(111L)
+                .build();
+        Product savedProduct = new Product(1L, "New Product", "Product description");
+        when(productRepository.save(any())).thenReturn(savedProduct);
+
+        Brand brand = new Brand(11L, "Brand 1", "Description");
+        when(brandRepository.findById(11L)).thenReturn(Optional.of(brand));
+        when(categoryRepository.findById(111L)).thenReturn(Optional.empty());
+
+        // When / Then
+        assertThrows(ResourceNotFoundException.class, () -> productService.create(newProduct));
+    }
+
+    @Test
+    public void testUpdate_WithBrandAndCategory_UpdatesProduct() {
+        // Given
+        long productId = 1L;
+        ProductRequestDto updatedProduct = ProductRequestDto
+                .builder()
+                .name("Updated Product")
+                .description("Product description")
+                .imageUrl("image.jpg")
+                .brandId(11L)
+                .categoryId(111L)
+                .build();
+        Product retrievedProduct = new Product(1L, "Original Product", "Original description");
+        Product savedProduct = new Product(1L, "Updated Product", "Product description");
+
+        when(productRepository.findById(productId)).thenReturn(Optional.of(retrievedProduct));
+        when(productRepository.save(any())).thenReturn(savedProduct);
+
+        Brand brand = new Brand(11L, "Brand 1", "Description");
+        when(brandRepository.findById(11L)).thenReturn(Optional.of(brand));
+
+        Category category = new Category(111L, "Category 1", "Description");
+        when(categoryRepository.findById(111L)).thenReturn(Optional.of(category));
+
+
+        // When
+        Product result = productService.update(productId, updatedProduct);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(productId);
+        assertThat(result.getName()).isEqualTo("Updated Product");
+        assertThat(result.getDescription()).isEqualTo("Product description");
+    }
+
+    @Test
+    public void testUpdate_WithoutBrandAndCategory_UpdatesProduct() {
         // Given
         long productId = 1L;
         ProductRequestDto updatedProduct = ProductRequestDto
@@ -142,7 +256,7 @@ public class ProductServiceImplTest {
     }
 
     @Test
-    public void testUpdate_WhenProductNotFound_ThrowNotFoundException() {
+    public void testUpdate_WhenProductNotFound_ThrowsNotFoundException() {
         // Given
         long productId = 1L;
         ProductRequestDto updatedProduct = ProductRequestDto
@@ -151,6 +265,59 @@ public class ProductServiceImplTest {
                 .description("Product description")
                 .build();
         when(productRepository.findById(productId)).thenReturn(Optional.empty());
+
+        // When/Then
+        assertThrows(ResourceNotFoundException.class, () -> productService.update(productId, updatedProduct));
+    }
+
+    @Test
+    public void testUpdate_WithNonExistingBrand_ThrowsNotFoundException() {
+        // Given
+        long productId = 1L;
+        ProductRequestDto updatedProduct = ProductRequestDto
+                .builder()
+                .name("Updated Product")
+                .description("Product description")
+                .imageUrl("image.jpg")
+                .brandId(11L)
+                .categoryId(111L)
+                .build();
+        Product retrievedProduct = new Product(1L, "Original Product", "Original description");
+        Product savedProduct = new Product(1L, "Updated Product", "Product description");
+
+        when(productRepository.findById(productId)).thenReturn(Optional.of(retrievedProduct));
+        when(productRepository.save(any())).thenReturn(savedProduct);
+
+        when(brandRepository.findById(11L)).thenReturn(Optional.empty());
+
+        Category category = new Category(111L, "Category 1", "Description");
+        when(categoryRepository.findById(111L)).thenReturn(Optional.of(category));
+
+        // When/Then
+        assertThrows(ResourceNotFoundException.class, () -> productService.update(productId, updatedProduct));
+    }
+
+    @Test
+    public void testUpdate_WithNonExistingCategory_ThrowsNotFoundException() {
+        // Given
+        long productId = 1L;
+        ProductRequestDto updatedProduct = ProductRequestDto
+                .builder()
+                .name("Updated Product")
+                .description("Product description")
+                .imageUrl("image.jpg")
+                .brandId(11L)
+                .categoryId(111L)
+                .build();
+        Product retrievedProduct = new Product(1L, "Original Product", "Original description");
+        Product savedProduct = new Product(1L, "Updated Product", "Product description");
+
+        when(productRepository.findById(productId)).thenReturn(Optional.of(retrievedProduct));
+        when(productRepository.save(any())).thenReturn(savedProduct);
+
+        Brand brand = new Brand(11L, "Brand 1", "Description");
+        when(brandRepository.findById(11L)).thenReturn(Optional.of(brand));
+        when(categoryRepository.findById(111L)).thenReturn(Optional.empty());
 
         // When/Then
         assertThrows(ResourceNotFoundException.class, () -> productService.update(productId, updatedProduct));
@@ -170,7 +337,7 @@ public class ProductServiceImplTest {
     }
 
     @Test
-    public void testDelete_WhenProductNotFound_ThrowNotFoundException() {
+    public void testDelete_WhenProductNotFound_ThrowsNotFoundException() {
         // Given
         long productId = 1L;
         when(productRepository.existsById(productId)).thenReturn(false);
@@ -210,7 +377,7 @@ public class ProductServiceImplTest {
     }
 
     @Test
-    public void testGetVariationsByProduct() {
+    public void testGetVariationsByProduct_HasOneVariation_ReturnsProductWithTheVariation() {
         // Given
         Product product = Product
                 .builder()
@@ -265,7 +432,7 @@ public class ProductServiceImplTest {
     }
 
     @Test
-    public void testGetVariationsByProduct_GroupByStore() {
+    public void testGetVariationsByProduct_HasMultipleVariations_GroupByStore() {
         // Given
         Product product = Product
                 .builder()
@@ -368,6 +535,35 @@ public class ProductServiceImplTest {
         assertEquals(53L, productStoreDto3.getPrice());
     }
 
+    @Test
+    public void testGetVariationsByProduct_HasNoVariations_ReturnsProduct() {
+        // Given
+        Product product = Product
+                .builder()
+                .id(1L)
+                .name("Product 1")
+                .description("Product 1 description")
+                .imageUrl("https://prico.com/images/product1.jpg")
+                .build();
+
+        when(productRepository
+                .findById(1L))
+                .thenReturn(Optional.of(product));
+
+        when(productStoreRepository
+                .findAllByProduct(product))
+                .thenReturn(Collections.EMPTY_LIST);
+
+        // When
+        ProductVariationResponseDto result = productService.getVariationsByProduct(1L);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertEquals(1L, result.getProductId());
+        assertEquals("Product 1", result.getProductName());
+        assertEquals("https://prico.com/images/product1.jpg", result.getProductImageUrl());
+        assertEquals(0, result.getStores().size());
+    }
 
     @Test
     public void testGetVariationsByProduct_WhenProductNotFound_ThrowNotFoundException() {

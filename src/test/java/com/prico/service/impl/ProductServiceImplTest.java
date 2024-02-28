@@ -235,7 +235,7 @@ public class ProductServiceImplTest {
                 .name("Product 1 variation")
                 .imageUrl("image.jpg")
                 .url("https://store1.com/product1-variation")
-                .price(5.5F)
+                .price(55L)
                 .product(product)
                 .store(store)
                 .build();
@@ -261,7 +261,7 @@ public class ProductServiceImplTest {
         assertEquals("Product 1 variation", result.getStores().get(0).getVariations().get(0).getName());
         assertEquals("image.jpg", result.getStores().get(0).getVariations().get(0).getImageUrl());
         assertEquals("https://store1.com/product1-variation", result.getStores().get(0).getVariations().get(0).getUrl());
-        assertEquals(5.5F, result.getStores().get(0).getVariations().get(0).getPrice());
+        assertEquals(55L, result.getStores().get(0).getVariations().get(0).getPrice());
     }
 
     @Test
@@ -297,7 +297,7 @@ public class ProductServiceImplTest {
                 .name("Product 1 variation 1")
                 .imageUrl("image1.jpg")
                 .url("https://store1.com/product1-variation1")
-                .price(5.5F)
+                .price(55L)
                 .product(product)
                 .store(store1)
                 .build();
@@ -308,7 +308,7 @@ public class ProductServiceImplTest {
                 .name("Product 1 variation 2")
                 .imageUrl("image2.jpg")
                 .url("https://store1.com/product1-variation2")
-                .price(5.6F)
+                .price(56L)
                 .product(product)
                 .store(store1)
                 .build();
@@ -319,7 +319,7 @@ public class ProductServiceImplTest {
                 .name("Product 1 variation 3")
                 .imageUrl("image3.jpg")
                 .url("https://store1.com/product1-variation3")
-                .price(5.3F)
+                .price(53L)
                 .product(product)
                 .store(store2)
                 .build();
@@ -355,17 +355,17 @@ public class ProductServiceImplTest {
         assertEquals("Product 1 variation 1", productStoreDto1.getName());
         assertEquals("image1.jpg", productStoreDto1.getImageUrl());
         assertEquals("https://store1.com/product1-variation1", productStoreDto1.getUrl());
-        assertEquals(5.5F, productStoreDto1.getPrice());
+        assertEquals(55L, productStoreDto1.getPrice());
 
         assertEquals("Product 1 variation 2", productStoreDto2.getName());
         assertEquals("image2.jpg", productStoreDto2.getImageUrl());
         assertEquals("https://store1.com/product1-variation2", productStoreDto2.getUrl());
-        assertEquals(5.6F, productStoreDto2.getPrice());
+        assertEquals(56L, productStoreDto2.getPrice());
 
         assertEquals("Product 1 variation 3", productStoreDto3.getName());
         assertEquals("image3.jpg", productStoreDto3.getImageUrl());
         assertEquals("https://store1.com/product1-variation3", productStoreDto3.getUrl());
-        assertEquals(5.3F, productStoreDto3.getPrice());
+        assertEquals(53L, productStoreDto3.getPrice());
     }
 
 

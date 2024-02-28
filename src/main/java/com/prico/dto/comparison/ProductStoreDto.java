@@ -19,5 +19,5 @@ public class ProductStoreDto {
 
     private String imageUrl;
 
-    private Float price;
+    private Long price;
 }

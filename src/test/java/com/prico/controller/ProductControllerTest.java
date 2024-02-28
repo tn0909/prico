@@ -266,7 +266,7 @@ public class ProductControllerTest {
                 .name("Product 1 variation")
                 .url("store1.com/product1")
                 .imageUrl("store1.com/images/product1.jpg")
-                .price(4.5F)
+                .price(45L)
                 .build();
 
         StoreDto store = StoreDto
@@ -301,7 +301,7 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.stores.[0].variations[0].name").value("Product 1 variation"))
                 .andExpect(jsonPath("$.stores.[0].variations[0].url").value("store1.com/product1"))
                 .andExpect(jsonPath("$.stores.[0].variations[0].imageUrl").value("store1.com/images/product1.jpg"))
-                .andExpect(jsonPath("$.stores.[0].variations[0].price").value(4.5));
+                .andExpect(jsonPath("$.stores.[0].variations[0].price").value(45L));
     }
 
     @Test

@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 @Data
 @AllArgsConstructor
@@ -21,8 +23,9 @@ public class ProductStoreRequestDto {
 
     private String imageUrl;
 
-    @NotBlank(message = "Price should not be NULL or 0")
-    private Float price;
+    @NotNull(message = "Price should not be NULL")
+    @Positive(message = "Price should be greater than 0")
+    private Long price;
 
     @NotBlank(message = "Product should not be NULL")
     private Long productId;

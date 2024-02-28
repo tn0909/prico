@@ -1,10 +1,11 @@
-name: Build and Test Java Spring Boot Application 
+name: Build and Test
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "develop"  ]
   pull_request:
-    branches: [ "develop" ]
+    branches: [ "master", "develop" ]
+    types: [ opened, synchronize, reopened]
 
 jobs:
   build:
@@ -45,13 +46,30 @@ jobs:
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-maven-
-          
-    - name: Run Tests
-      run: mvn test
 
-    - name: Upload Test Report
-      uses: actions/upload-artifact@v3
-      if: success() || failure()
+    - name: Get variables
+      run: |
+        echo "PR_NUMBER=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
+        echo "RUN_ID=${{ github.run_id }}" >> $GITHUB_ENV
+
+    - name: Run tests with coverage
+      run: mvn -B clean test
+
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v2
       with:
-        name: test-results                    # Name of the folder
-        path: target/surefire-reports         # Path to test results
+        name: coverage-report
+        path: target/site/jacoco
+
+    - name: Add coverage to PR
+      env:
+        GH_TOKEN: ${{ secrets.GH_SECRET }}
+      run: |
+        # Generate coverage report and parse results
+        line=$(grep 'Total' target/site/jacoco/index.html)
+        coverage=$(echo "$line" | cut -d'%' -f 1 | grep -oE '[0-9]+' | tail -n 1)
+        message=$(echo -e "### Test Coverage Report\nTotal coverage: $coverage%\n\n*You can download the full report at the [Artifacts section](https://github.com/tn0909/prico/actions/runs/$RUN_ID?pr=$PR_NUMBER)*")
+        # Post comment in pull request
+        gh pr comment $PR_NUMBER --body "$message"
+
+

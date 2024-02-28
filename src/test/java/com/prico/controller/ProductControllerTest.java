@@ -7,12 +7,14 @@ import com.prico.dto.crud.ProductRequestDto;
 import com.prico.dto.crud.ProductResponseDto;
 import com.prico.model.Product;
 import com.prico.exception.ResourceNotFoundException;
+import com.prico.security.JwtDecoderUtil;
 import com.prico.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
@@ -21,6 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -30,11 +33,17 @@ public class ProductControllerTest {
     @MockBean
     private ProductService productService;
 
+    @MockBean
+    private JwtDecoderUtil jwtDecoderUtil;
+
+    @MockBean
+    private JwtDecoder jwtDecoder;
+
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    public void testGetAll() throws Exception {
+    public void testGetAll_ReturnsList() throws Exception {
         ProductResponseDto product1 = ProductResponseDto
                 .builder()
                 .id(1L)
@@ -65,7 +74,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void testGetById() throws Exception {
+    public void testGetById_ReturnsItem() throws Exception {
         ProductResponseDto productDto = new ProductResponseDto();
         productDto.setId(1L);
         productDto.setName("Test Product");
@@ -84,7 +93,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void testGetById_WithNonExistentId() throws Exception {
+    public void testGetById_WithNonExistentId_ReturnsNotFound() throws Exception {
         long nonExistentId = 100L;
         when(productService
                 .getById(eq(nonExistentId)))
@@ -97,8 +106,9 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void testCreate() throws Exception {
+    public void testCreate_ReturnsCreated() throws Exception {
         mockMvc.perform(post("/products")
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"New Product\",\"description\":\"This is a test product\"}"))
                 .andExpect(status().isCreated())
@@ -109,10 +119,21 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void testCreate_WithEmptyName() throws Exception {
+    public void testCreate_Unauthorised_ReturnsUnauthorized() throws Exception {
+        mockMvc.perform(post("/products")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"New Product\",\"description\":\"This is a test product\"}"))
+                .andExpect(status().isUnauthorized());
+
+        verify(productService, never()).create(any(ProductRequestDto.class));
+    }
+
+    @Test
+    public void testCreate_WithEmptyName_ReturnsBadRequest() throws Exception {
         String invalidJsonInput = "{\"name\":\"\",\"description\":\"This is a test product\"}";
 
         mockMvc.perform(post("/products")
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(invalidJsonInput))
                 .andExpect(status().isBadRequest())
@@ -125,7 +146,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate_ReturnsOk() throws Exception {
         long productId = 1L;
         Product updatedProduct = Product
                 .builder()
@@ -138,6 +159,7 @@ public class ProductControllerTest {
                 .thenReturn(updatedProduct);
 
         mockMvc.perform(put("/products/{id}", productId)
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"Updated Product\",\"description\":\"Updated description\"}"))
                 .andExpect(status().isOk())
@@ -148,13 +170,26 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void testUpdate_WithNonExistentId() throws Exception {
+    public void testUpdate_Unauthorised_ReturnsUnauthorized() throws Exception {
+        long productId = 1L;
+
+        mockMvc.perform(put("/products/{id}", productId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"Updated Product\",\"description\":\"Updated description\"}"))
+                .andExpect(status().isUnauthorized());
+
+        verify(productService, never()).update(any(), any());
+    }
+
+    @Test
+    public void testUpdate_WithNonExistentId_ReturnsNotFound() throws Exception {
         long nonExistentId = 100L;
         when(productService
                 .update(eq(nonExistentId), any()))
                 .thenThrow(new ResourceNotFoundException("Invalid product"));
 
         mockMvc.perform(put("/products/{id}", nonExistentId)
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"Updated Product\",\"description\":\"Updated description\"}"))
                 .andExpect(status().isNotFound())
@@ -163,10 +198,11 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void testUpdate_WithEmptyName() throws Exception {
+    public void testUpdate_WithEmptyName_ReturnsBadRequest() throws Exception {
         String invalidJsonInput = "{\"name\":\"\",\"description\":\"This is a test product\"}";
 
         mockMvc.perform(put("/products/{id}", 1L)
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(invalidJsonInput))
                 .andExpect(status().isBadRequest())
@@ -178,11 +214,12 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void testDelete() throws Exception {
+    public void testDelete_ReturnsOk() throws Exception {
         long productId = 1L;
         doNothing().when(productService).delete(productId);
 
         mockMvc.perform(delete("/products/{id}", productId)
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -192,13 +229,25 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void testDelete_WithNonExistentId() throws Exception {
+    public void testDelete_Unauthorised_ReturnsUnauthorized() throws Exception {
+        long productId = 1L;
+
+        mockMvc.perform(delete("/products/{id}", productId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+
+        verify(productService, never()).delete(any());
+    }
+
+    @Test
+    public void testDelete_WithNonExistentId_ReturnsNotFound() throws Exception {
         long nonExistentId = 100L;
         doThrow(new ResourceNotFoundException("Invalid product"))
                 .when(productService)
                 .delete(nonExistentId);
 
         mockMvc.perform(delete("/products/{id}", nonExistentId)
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -206,7 +255,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void testSearch() throws Exception {
+    public void testSearch_ReturnsResult() throws Exception {
         ProductResponseDto product1 = ProductResponseDto
                 .builder()
                 .id(1L)
@@ -241,7 +290,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void testSearch_WithoutSearchCriteria() throws Exception {
+    public void testSearch_WithoutSearchCriteria_ReturnsBadRequest() throws Exception {
         String searchJson = "{\"name\":\"\",\"category\":\"\",\"brand\": \"\"}";
 
         mockMvc.perform(post("/products/search")
@@ -257,7 +306,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void testGetVariations() throws Exception {
+    public void testGetVariations_ReturnsList() throws Exception {
         Long productId = 1L;
 
         ProductStoreDto variation = ProductStoreDto
@@ -305,7 +354,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void testGetVariations_WithNonExistentId() throws Exception {
+    public void testGetVariations_WithNonExistentId_ReturnsNotFound() throws Exception {
         long nonExistentId = 100L;
         when(productService
                 .getVariationsByProduct(eq(nonExistentId)))

@@ -4,12 +4,14 @@ import com.prico.dto.crud.BrandRequestDto;
 import com.prico.dto.crud.BrandResponseDto;
 import com.prico.model.Brand;
 import com.prico.exception.ResourceNotFoundException;
+import com.prico.security.JwtDecoderUtil;
 import com.prico.service.BrandService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
@@ -18,6 +20,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -27,11 +30,17 @@ public class BrandControllerTest {
     @MockBean
     private BrandService brandService;
 
+    @MockBean
+    private JwtDecoderUtil jwtDecoderUtil;
+
+    @MockBean
+    private JwtDecoder jwtDecoder;
+
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    public void testGetAll() throws Exception {
+    public void testGetAll_ReturnsList() throws Exception {
         BrandResponseDto brand1 = BrandResponseDto
                 .builder()
                 .id(1L)
@@ -62,7 +71,7 @@ public class BrandControllerTest {
     }
 
     @Test
-    public void testGetById() throws Exception {
+    public void testGetById_ReturnsItem() throws Exception {
         BrandResponseDto brandDto = new BrandResponseDto();
         brandDto.setId(1L);
         brandDto.setName("Test Brand");
@@ -81,7 +90,7 @@ public class BrandControllerTest {
     }
 
     @Test
-    public void testGetById_WithNonExistentId() throws Exception {
+    public void testGetById_WithNonExistentId_ReturnsNotFound() throws Exception {
         long nonExistentId = 100L;
         when(brandService
                 .getById(eq(nonExistentId)))
@@ -94,8 +103,9 @@ public class BrandControllerTest {
     }
 
     @Test
-    public void testCreate() throws Exception {
+    public void testCreate_ReturnsCreated() throws Exception {
         mockMvc.perform(post("/brands")
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"New Brand\",\"description\":\"This is a test brand\"}"))
                 .andExpect(status().isCreated())
@@ -106,10 +116,21 @@ public class BrandControllerTest {
     }
 
     @Test
-    public void testCreate_WithEmptyName() throws Exception {
+    public void testCreate_Unauthorised_ReturnsUnauthorized() throws Exception {
+        mockMvc.perform(post("/brands")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"New Brand\",\"description\":\"This is a test brand\"}"))
+                .andExpect(status().isUnauthorized());
+
+        verify(brandService, never()).create(any(BrandRequestDto.class));
+    }
+
+    @Test
+    public void testCreate_WithEmptyName_ReturnsNotFound() throws Exception {
         String invalidJsonInput = "{\"name\":\"\",\"description\":\"This is a test brand\"}";
 
         mockMvc.perform(post("/brands")
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(invalidJsonInput))
                 .andExpect(status().isBadRequest())
@@ -122,7 +143,7 @@ public class BrandControllerTest {
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate_ReturnsOk() throws Exception {
         long brandId = 1L;
         Brand updatedBrand = Brand
                 .builder()
@@ -135,6 +156,7 @@ public class BrandControllerTest {
                 .thenReturn(updatedBrand);
 
         mockMvc.perform(put("/brands/{id}", brandId)
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"Updated Brand\",\"description\":\"Updated description\"}"))
                 .andExpect(status().isOk())
@@ -145,13 +167,26 @@ public class BrandControllerTest {
     }
 
     @Test
-    public void testUpdate_WithNonExistentId() throws Exception {
+    public void testUpdate_Unauthorised_ReturnsUnauthorised() throws Exception {
+        long brandId = 1L;
+
+        mockMvc.perform(put("/brands/{id}", brandId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"Updated Brand\",\"description\":\"Updated description\"}"))
+                .andExpect(status().isUnauthorized());
+
+        verify(brandService, never()).update(eq(brandId), any(BrandRequestDto.class));
+    }
+
+    @Test
+    public void testUpdate_WithNonExistentId_ReturnsNotFound() throws Exception {
         long nonExistentId = 100L;
         when(brandService
                 .update(eq(nonExistentId), any()))
                 .thenThrow(new ResourceNotFoundException("Invalid brand"));
 
         mockMvc.perform(put("/brands/{id}", nonExistentId)
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"Updated Brand\",\"description\":\"Updated description\"}"))
                 .andExpect(status().isNotFound())
@@ -160,10 +195,11 @@ public class BrandControllerTest {
     }
 
     @Test
-    public void testUpdate_WithEmptyName() throws Exception {
+    public void testUpdate_WithEmptyName_ReturnsBadRequest() throws Exception {
         String invalidJsonInput = "{\"name\":\"\",\"description\":\"This is a test brand\"}";
 
         mockMvc.perform(put("/brands/{id}", 1L)
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(invalidJsonInput))
                 .andExpect(status().isBadRequest())
@@ -175,11 +211,12 @@ public class BrandControllerTest {
     }
 
     @Test
-    public void testDelete() throws Exception {
+    public void testDelete_ReturnsOk() throws Exception {
         long brandId = 1L;
         doNothing().when(brandService).delete(brandId);
 
         mockMvc.perform(delete("/brands/{id}", brandId)
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -189,13 +226,26 @@ public class BrandControllerTest {
     }
 
     @Test
-    public void testDelete_WithNonExistentId() throws Exception {
+    public void testDelete_Unauthorised_ReturnsUnauthorized() throws Exception {
+        long brandId = 1L;
+        doNothing().when(brandService).delete(brandId);
+
+        mockMvc.perform(delete("/brands/{id}", brandId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+
+        verify(brandService, never()).delete(brandId);
+    }
+
+    @Test
+    public void testDelete_WithNonExistentId_ReturnsNotFound() throws Exception {
         long nonExistentId = 100L;
         doThrow(new ResourceNotFoundException("Invalid brand"))
                 .when(brandService)
                 .delete(nonExistentId);
 
         mockMvc.perform(delete("/brands/{id}", nonExistentId)
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))

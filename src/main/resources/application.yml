@@ -27,3 +27,10 @@ springfox:
 auth0:
   audience: https://prico.com
   domain: dev-ywc7xshec6w6nkoy.us.auth0.com
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+

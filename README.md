@@ -24,6 +24,7 @@ This project aims to develop a RESTful APIs for a price comparison website. The 
 - **Java**: Programming language for backend development
 - **Spring Boot**: Framework for building RESTful APIs
 - **MySQL**: Database management system for storing product and store information
+- **Auth0**: Authentication and authorization service to secure create/update/delete APIs
 - **JUnit and Mockito**: Testing frameworks for unit and integration testing
 - **Maven**: Dependency management and build automation
 - **GitHub Actions**: CI framework for automating the process of testing code changes upon each push to the repository

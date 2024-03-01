@@ -4,12 +4,14 @@ import com.prico.dto.crud.StoreRequestDto;
 import com.prico.dto.crud.StoreResponseDto;
 import com.prico.model.Store;
 import com.prico.exception.ResourceNotFoundException;
+import com.prico.security.JwtDecoderUtil;
 import com.prico.service.StoreService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
@@ -18,6 +20,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -27,11 +30,17 @@ public class StoreControllerTest {
     @MockBean
     private StoreService storeService;
 
+    @MockBean
+    private JwtDecoderUtil jwtDecoderUtil;
+
+    @MockBean
+    private JwtDecoder jwtDecoder;
+
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    public void testGetAll() throws Exception {
+    public void testGetAll_ReturnsList() throws Exception {
         StoreResponseDto store1 = StoreResponseDto
                 .builder()
                 .id(1L)
@@ -66,7 +75,7 @@ public class StoreControllerTest {
     }
 
     @Test
-    public void testGetById() throws Exception {
+    public void testGetById_ReturnsItem() throws Exception {
         StoreResponseDto storeDto = StoreResponseDto
                 .builder()
                 .id(1L)
@@ -89,7 +98,7 @@ public class StoreControllerTest {
     }
 
     @Test
-    public void testGetById_WithNonExistentId() throws Exception {
+    public void testGetById_WithNonExistentId_ReturnsNotFound() throws Exception {
         long nonExistentId = 100L;
         when(storeService
                 .getById(eq(nonExistentId)))
@@ -102,8 +111,9 @@ public class StoreControllerTest {
     }
 
     @Test
-    public void testCreate() throws Exception {
+    public void testCreate_ReturnsCreated() throws Exception {
         mockMvc.perform(post("/stores")
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"New Store\",\"location\":\"Store Location\",\"website\":\"store.com\"}"))
                 .andExpect(status().isCreated())
@@ -114,10 +124,20 @@ public class StoreControllerTest {
     }
 
     @Test
-    public void testCreate_WithEmptyName() throws Exception {
+    public void testCreate_Unauthorised_ReturnsUnauthorized() throws Exception {
+        mockMvc.perform(post("/stores")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"New Store\",\"location\":\"Store Location\",\"website\":\"store.com\"}"))
+                .andExpect(status().isUnauthorized());
+
+        verify(storeService, never()).create(any(StoreRequestDto.class));
+    }
+    @Test
+    public void testCreate_WithEmptyName_ReturnsNotFound() throws Exception {
         String invalidJsonInput = "{\"name\":\"\",\"location\":\"Store location\",\"website\":\"store.com\"}";
 
         mockMvc.perform(post("/stores")
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(invalidJsonInput))
                 .andExpect(status().isBadRequest())
@@ -130,7 +150,7 @@ public class StoreControllerTest {
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate_ReturnsOk() throws Exception {
         long storeId = 1L;
         Store updatedStore = Store
                 .builder()
@@ -144,6 +164,7 @@ public class StoreControllerTest {
                 .thenReturn(updatedStore);
 
         mockMvc.perform(put("/stores/{id}", storeId)
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"Updated Store\",\"location\":\"Updated location\",\"website\":\"updated-com.com\"}"))
                 .andExpect(status().isOk())
@@ -154,13 +175,26 @@ public class StoreControllerTest {
     }
 
     @Test
-    public void testUpdate_WithNonExistentId() throws Exception {
+    public void testUpdate_Unauthorised_ReturnsUnauthorized() throws Exception {
+        long storeId = 1L;
+
+        mockMvc.perform(put("/stores/{id}", storeId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"Updated Store\",\"location\":\"Updated location\",\"website\":\"updated-com.com\"}"))
+                .andExpect(status().isUnauthorized());
+
+        verify(storeService, never()).update(any(), any(StoreRequestDto.class));
+    }
+
+    @Test
+    public void testUpdate_WithNonExistentId_ReturnsNotFound() throws Exception {
         long nonExistentId = 100L;
         when(storeService
                 .update(eq(nonExistentId), any()))
                 .thenThrow(new ResourceNotFoundException("Invalid store"));
 
         mockMvc.perform(put("/stores/{id}", nonExistentId)
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"Updated Store\",\"location\":\"Updated location\",\"website\":\"updated-com.com\"}"))
                 .andExpect(status().isNotFound())
@@ -169,10 +203,11 @@ public class StoreControllerTest {
     }
 
     @Test
-    public void testUpdate_WithEmptyName() throws Exception {
+    public void testUpdate_WithEmptyName_ReturnsBadRequest() throws Exception {
         String invalidJsonInput = "{\"name\":\"\",\"location\":\"Updated location\",\"website\":\"updated-com.com\"}";
 
         mockMvc.perform(put("/stores/{id}", 1L)
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(invalidJsonInput))
                 .andExpect(status().isBadRequest())
@@ -184,11 +219,12 @@ public class StoreControllerTest {
     }
 
     @Test
-    public void testDelete() throws Exception {
+    public void testDelete_ReturnsOk() throws Exception {
         long storeId = 1L;
         doNothing().when(storeService).delete(storeId);
 
         mockMvc.perform(delete("/stores/{id}", storeId)
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -198,13 +234,26 @@ public class StoreControllerTest {
     }
 
     @Test
-    public void testDelete_WithNonExistentId() throws Exception {
+    public void testDelete_Unauthorised_ReturnsUnauthorized() throws Exception {
+        long storeId = 1L;
+        doNothing().when(storeService).delete(storeId);
+
+        mockMvc.perform(delete("/stores/{id}", storeId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+
+        verify(storeService, never()).delete(any());
+    }
+
+    @Test
+    public void testDelete_WithNonExistentId_ReturnsNotFound() throws Exception {
         long nonExistentId = 100L;
         doThrow(new ResourceNotFoundException("Invalid store"))
                 .when(storeService)
                 .delete(nonExistentId);
 
         mockMvc.perform(delete("/stores/{id}", nonExistentId)
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))

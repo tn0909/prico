@@ -11,6 +11,12 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://${auth0.domain}/
+
   # Fix error happens when starting application after adding swagger plugin
   mvc:
     pathmatch:
@@ -19,4 +25,12 @@ spring:
 # Logging configuration
 logging:
   level:
-    org.springframework: DEBUG
+    org:
+      springframework:
+        security: DEBUG
+
+auth0:
+  audience: https://prico.com
+  domain: prico.com
+
+

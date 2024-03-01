@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -160,9 +161,10 @@ public class ProductServiceImpl implements ProductService {
 
         ProductVariationResponseDto response = ProductVariationResponseDto
                 .builder()
-                 .productId(product.getId())
+                .productId(product.getId())
                 .productName(product.getName())
                 .productImageUrl(product.getImageUrl())
+                .stores(Collections.EMPTY_LIST)
                 .build();
 
         List<ProductStore> productStores = productStoreRepository.findAllByProduct(product);

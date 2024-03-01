@@ -4,20 +4,29 @@ import com.prico.dto.crud.CategoryRequestDto;
 import com.prico.dto.crud.CategoryResponseDto;
 import com.prico.model.Category;
 import com.prico.exception.ResourceNotFoundException;
+import com.prico.security.JwtDecoderUtil;
 import com.prico.service.CategoryService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.anonymous;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -27,11 +36,17 @@ public class CategoryControllerTest {
     @MockBean
     private CategoryService service;
 
+    @MockBean
+    private JwtDecoderUtil jwtDecoderUtil;
+
+    @MockBean
+    private JwtDecoder jwtDecoder;
+
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    public void testGetAll() throws Exception {
+    public void testGetAll_ReturnsList() throws Exception {
         CategoryResponseDto category1 = CategoryResponseDto
                 .builder()
                 .id(1L)
@@ -62,7 +77,7 @@ public class CategoryControllerTest {
     }
 
     @Test
-    public void testGetById() throws Exception {
+    public void testGetById_ReturnsItem() throws Exception {
         CategoryResponseDto categoryDto = new CategoryResponseDto();
         categoryDto.setId(1L);
         categoryDto.setName("Test Category");
@@ -81,7 +96,7 @@ public class CategoryControllerTest {
     }
 
     @Test
-    public void testGetById_WithNonExistentId() throws Exception {
+    public void testGetById_WithNonExistentId_ReturnsNotFound() throws Exception {
         long nonExistentId = 100L;
         when(service
                 .getById(eq(nonExistentId)))
@@ -94,8 +109,9 @@ public class CategoryControllerTest {
     }
 
     @Test
-    public void testCreate() throws Exception {
+    public void testCreate_ReturnsCreated() throws Exception {
         mockMvc.perform(post("/categories")
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"New Category\",\"description\":\"This is a test category\"}"))
                 .andExpect(status().isCreated())
@@ -106,10 +122,21 @@ public class CategoryControllerTest {
     }
 
     @Test
-    public void testCreate_WithEmptyName() throws Exception {
+    public void testCreate_Unauthorised_ReturnsUnauthorised() throws Exception {
+        mockMvc.perform(post("/categories")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"New Category\",\"description\":\"This is a test category\"}"))
+                .andExpect(status().isUnauthorized());
+
+        verify(service, never()).create(any(CategoryRequestDto.class));
+    }
+
+    @Test
+    public void testCreate_WithEmptyName_ReturnsBadRequest() throws Exception {
         String invalidJsonInput = "{\"name\":\"\",\"description\":\"This is a test category\"}";
 
         mockMvc.perform(post("/categories")
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(invalidJsonInput))
                 .andExpect(status().isBadRequest())
@@ -122,7 +149,31 @@ public class CategoryControllerTest {
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdate_ReturnsOk() throws Exception {
+        long categoryId = 1L;
+        Category updatedCategory = Category
+                .builder()
+                .id(categoryId)
+                .name("Updated Category")
+                .description("Updated description")
+                .build();
+        when(service
+                .update(eq(categoryId), any(CategoryRequestDto.class)))
+                .thenReturn(updatedCategory);
+
+        mockMvc.perform(put("/categories/{id}", categoryId)
+                .with(jwt())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"Updated Category\",\"description\":\"Updated description\"}"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value("Product Category has been updated successfully"));
+
+        verify(service).update(eq(categoryId), any(CategoryRequestDto.class));
+    }
+
+    @Test
+    public void testUpdate_Unauthorised_ReturnsUnauthorised() throws Exception {
         long categoryId = 1L;
         Category updatedCategory = Category
                 .builder()
@@ -137,21 +188,20 @@ public class CategoryControllerTest {
         mockMvc.perform(put("/categories/{id}", categoryId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"Updated Category\",\"description\":\"Updated description\"}"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.message").value("Product Category has been updated successfully"));
+                .andExpect(status().isUnauthorized());
 
-        verify(service).update(eq(categoryId), any(CategoryRequestDto.class));
+        verify(service, never()).update(eq(categoryId), any(CategoryRequestDto.class));
     }
 
     @Test
-    public void testUpdate_WithNonExistentId() throws Exception {
+    public void testUpdate_WithNonExistentId_ReturnsNotFound() throws Exception {
         long nonExistentId = 100L;
         when(service
                 .update(eq(nonExistentId), any()))
                 .thenThrow(new ResourceNotFoundException("Invalid category"));
 
         mockMvc.perform(put("/categories/{id}", nonExistentId)
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"Updated Category\",\"description\":\"Updated description\"}"))
                 .andExpect(status().isNotFound())
@@ -160,10 +210,11 @@ public class CategoryControllerTest {
     }
 
     @Test
-    public void testUpdate_WithEmptyName() throws Exception {
+    public void testUpdate_WithEmptyName_ReturnsBadRequest() throws Exception {
         String invalidJsonInput = "{\"name\":\"\",\"description\":\"This is a test category\"}";
 
         mockMvc.perform(put("/categories/{id}", 1L)
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(invalidJsonInput))
                 .andExpect(status().isBadRequest())
@@ -175,11 +226,12 @@ public class CategoryControllerTest {
     }
 
     @Test
-    public void testDelete() throws Exception {
+    public void testDelete_ReturnsOk() throws Exception {
         long categoryId = 1L;
         doNothing().when(service).delete(categoryId);
 
         mockMvc.perform(delete("/categories/{id}", categoryId)
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -189,13 +241,27 @@ public class CategoryControllerTest {
     }
 
     @Test
-    public void testDelete_WithNonExistentId() throws Exception {
+    public void testDelete_Unauthorised_ReturnsUnauthorised() throws Exception {
+        long categoryId = 1L;
+        doNothing().when(service).delete(categoryId);
+
+        mockMvc.perform(delete("/categories/{id}", categoryId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+
+        verify(service, never()).delete(categoryId);
+    }
+
+
+    @Test
+    public void testDelete_WithNonExistentId_ReturnsNotFound() throws Exception {
         long nonExistentId = 100L;
         doThrow(new ResourceNotFoundException("Invalid category"))
                 .when(service)
                 .delete(nonExistentId);
 
         mockMvc.perform(delete("/categories/{id}", nonExistentId)
+                .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))

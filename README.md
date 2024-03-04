@@ -27,6 +27,7 @@ This project aims to develop a RESTful APIs for a price comparison website. The 
 - **Auth0**: Authentication and authorization service to secure create/update/delete APIs
 - **JUnit and Mockito**: Testing frameworks for unit and integration testing
 - **Maven**: Dependency management and build automation
+- **Docker**: Containerization platform
 - **GitHub Actions**: CI framework for automating the process of testing code changes upon each push to the repository
 
 ## Installation
@@ -38,6 +39,22 @@ This project aims to develop a RESTful APIs for a price comparison website. The 
 - MySQL
 
 ### Steps
+
+#### Steps to build and run in Docker
+
+1. Clone the repository:
+```
+git clone https://github.com/tn0909/prico.git
+```
+
+2. Run Docker command:
+```
+docker-compose up
+```
+
+3. The API will be accessible at `http://localhost:8080`.
+
+#### Steps to build and run in development environment
 
 1. Clone the repository:
 ```
@@ -58,6 +75,7 @@ mvn spring-boot:run
 ```
 
 6. The API will be accessible at `http://localhost:8080`.
+
 
 ## API Documentation
 

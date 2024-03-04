@@ -1,11 +1,28 @@
-version: '2'
+version: '3.7'
 
 services:
-  mysql-db:
+  api_service:
+    build: .
+    restart: always
+    ports:
+    - "8080:8080"
+    networks:
+    - prico_net
+    environment:
+    - spring.datasource.url=jdbc:mysql://mysql_db:3306/prico
+    depends_on:
+    - mysql_db
+
+  mysql_db:
     image: mysql:latest
-    container_name: prico-db
+    container_name: prico_db
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: prico
     ports:
     - "3307:3306"
+    networks:
+    - prico_net
+
+networks:
+  prico_net:

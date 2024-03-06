@@ -27,9 +27,9 @@ public class ProductStoreRequestDto {
     @Positive(message = "Price should be greater than 0")
     private Long price;
 
-    @NotBlank(message = "Product should not be NULL")
+    @NotNull(message = "Product should not be NULL")
     private Long productId;
 
-    @NotBlank(message = "Store should not be NULL")
+    @NotNull(message = "Store should not be NULL")
     private Long storeId;
 }

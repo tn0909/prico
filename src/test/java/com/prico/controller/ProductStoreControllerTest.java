@@ -128,6 +128,23 @@ public class ProductStoreControllerTest {
     }
 
     @Test
+    public void testCreate_WithoutPrice_ReturnsBadRequest() throws Exception {
+        String invalidJsonInput = "{\"name\":\"Product 1\",\"url\":\"product.html\",\"imageUrl\":\"image\",\"productId\":99,\"storeId\":66}";
+
+        mockMvc.perform(post("/product-stores")
+                .with(jwt())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(invalidJsonInput))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value("error"))
+                .andExpect(jsonPath("$.message").value("Validation failed"))
+                .andExpect(jsonPath("$.errors").isArray())
+                .andExpect(jsonPath("$.errors[0].field").value("price"))
+                .andExpect(jsonPath("$.errors[0].message").value("Price should not be NULL"));
+    }
+
+    @Test
     public void testCreate_WithNegativePrice_ReturnsBadRequest() throws Exception {
         String invalidJsonInput = "{\"name\":\"Product 1\",\"url\":\"product.html\",\"imageUrl\":\"image\",\"price\":-5500,\"productId\":99,\"storeId\":66}";
 
@@ -260,6 +277,22 @@ public class ProductStoreControllerTest {
                 .andExpect(jsonPath("$.errors").isArray())
                 .andExpect(jsonPath("$.errors[0].field").value("url"))
                 .andExpect(jsonPath("$.errors[0].message").value("Url should not be NULL or EMPTY"));
+    }
+
+    @Test
+    public void testUpdate_WithoutPrice_ReturnsBadRequest() throws Exception {
+        String invalidJsonInput = "{\"name\":\"New Product\",\"url\":\"www.store1.com/product1\",\"imageUrl\":\"image\",\"productId\":99,\"storeId\":66}";
+
+        mockMvc.perform(put("/product-stores/{id}", 1L)
+                .with(jwt())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(invalidJsonInput))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("error"))
+                .andExpect(jsonPath("$.message").value("Validation failed"))
+                .andExpect(jsonPath("$.errors").isArray())
+                .andExpect(jsonPath("$.errors[0].field").value("price"))
+                .andExpect(jsonPath("$.errors[0].message").value("Price should not be NULL"));
     }
 
     @Test

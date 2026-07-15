@@ -1,81 +1,172 @@
-# Price Comparison RESTful API
+# Price Comparison REST API
 
-This project aims to develop a RESTful APIs for a price comparison website. The API allows users to search for products and compare prices from various stores.
+A Spring Boot REST API for a price comparison application that allows users to search products, compare prices across stores, and manage product information.
+
+The project focuses on building a maintainable backend application using RESTful API design, layered architecture, database modelling, automated testing, and CI/CD practices.
 
 ## Table of Contents
 
 - [Features](#features)
-- [Technologies Used](#technologies-used)
-- [Installation](#installation)
+- [Technology Stack](#technology-stack)
+- [Architecture](#architecture)
+- [API Endpoints](#api-endpoints)
+- [Running Locally](#running-locally)
 - [API Documentation](#api-documentation)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
-- [Acknowledgments](#acknowledgments)
+- [Testing](#testing)
+- [CI/CD](#cicd)
+- [Challenges & Solutions](#challenges--solutions)
+- [Future Improvements](#future-improvements)
+
+---
 
 ## Features
 
-- **Product Search**: Search for products by name, category, brand, etc.
-- **Price Comparison**: Compare prices for the same product from different stores.
-- **Admin Operations**: CRUD operations for managing products and stores.
+#### Product Search
 
-## Technologies Used
+- Search products by name, category, and brand.
+- Retrieve product details and available store prices.
 
-- **Java**: Programming language for backend development
-- **Spring Boot**: Framework for building RESTful APIs
-- **MySQL**: Database management system for storing product and store information
-- **JUnit and Mockito**: Testing frameworks for unit and integration testing
-- **Maven**: Dependency management and build automation
-- **GitHub Actions**: CI framework for automating the process of testing code changes upon each push to the repository
+#### Price Comparison
 
-## Installation
+- Compare prices of the same product across different stores.
+- Return product variations with pricing information.
 
-### Prerequisites
+#### Product Management
 
-- Java Development Kit (JDK) 8 or later
+- Create, update, retrieve, and delete products.
+- Manage relationships between products and stores.
+
+---
+
+## Technology Stack
+
+- **Backend**: Java, Spring Boot
+- **Database**: MySQL
+- **Testing**: JUnit, Mockito
+- **Build & CI/CD**: Maven, GitHub Actions
+- **API Documentation**: Swagger / OpenAPI
+- **Development**: Docker Compose
+
+## Architecture
+
+The application follows a layered architecture:
+
+```
+Controller
+    |
+Service
+    |
+Repository
+    |
+Database
+```
+
+Main responsibilities:
+
+- **Controllers** handle HTTP requests and API responses.
+- **Services** contain business logic.
+- **Repositories** manage database access.
+- **DTOs** are used to separate API models from database entities.
+
+## API Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/products/search` | Search products |
+| GET | `/products` | Retrieve products |
+| GET | `/products/{id}` | Retrieve product details |
+| GET | `/products/{id}/variations` | Compare prices across stores |
+| PUT | `/products/{id}` | Update product |
+| DELETE | `/products/{id}` | Delete product |
+
+Request and response examples can be found [here](https://gist.github.com/tn0909/938735954974764c2d99f60384c62fbf)
+
+
+## Running Locally
+
+#### Prerequisites
+
+- Java 8+
 - Maven
-- MySQL
+- Docker
 
-### Steps
+#### Start Database
 
-1. Clone the repository:
+Run MySQL using Docker Compose:
+
+```bash
+docker compose up
 ```
-git clone https://github.com/tn0909/prico.git
-```
 
-2. Configure the database connection in `application.yml`.
+#### Build Application
 
-3. Build the project:
-```
-cd prico
+```bash
 mvn clean install
 ```
 
-4. Run the application:
-```
+#### Run Application
+
+```bash
 mvn spring-boot:run
 ```
 
-6. The API will be accessible at `http://localhost:8080`.
+The API will be available at:
+
+```
+http://localhost:8080
+```
 
 ## API Documentation
 
-The API documentation is available at `http://localhost:8080/swagger-ui/`. Use this interface to explore available endpoints and test API functionality.
-
-## Usage
-
-The API supports various endpoints for searching products, retrieving price comparisons, managing products, and more. Refer to the API documentation for full details on available endpoints, request/response formats, and authentication requirements.
-
-[Here](https://gist.github.com/tn0909/938735954974764c2d99f60384c62fbf) are request/response samples for the following endpoints:
+Swagger UI:
 
 ```
-POST   ​/products/search
-GET    ​/products/{id}/variations
-GET    ​/products
-GET    ​/products/{id}
-PUT    ​/products/{id}
-DELETE ​/products/{id}
+http://localhost:8080/swagger-ui/
 ```
+
+Use Swagger UI to explore available endpoints and test API requests.
+
+## Testing
+
+Run automated tests:
+
+```bash
+mvn test
+```
+
+The project uses:
+
+- JUnit for unit testing.
+- Mockito for mocking dependencies.
+
+## CI/CD
+
+GitHub Actions runs automated build and test checks when changes are pushed.
+
+The pipeline helps verify that:
+
+- The application builds successfully.
+- Automated tests pass before changes are merged.
+
+
+## Challenges & Solutions
+
+#### Designing Product and Store Relationships
+
+**Challenge**
+
+A product can be available from multiple stores with different prices. The data model needed to represent product information while supporting price comparison.
+
+**Solution**
+
+Designed separate entities for products, stores, and product variations to maintain clear relationships and avoid duplicating product data.
+
+## Future Improvements
+
+- Add authentication and authorization using Spring Security
+- Add pagination and sorting for product search
+- Introduce caching for frequently accessed products
+- Deploy the application using Docker and cloud infrastructure
 
 ## Contributing
 
@@ -84,7 +175,3 @@ Contributions are welcome! If you have suggestions for improving the API or addi
 ## License
 
 Please credit the author if you use this project or any of its components in your own work.
-
-## Acknowledgments
-
-Libraries and frameworks used
